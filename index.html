@@ -1,1 +1,1453 @@
 
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zoho Voice Calculator — Wolq</title>
+<link href="https://fonts.googleapis.com/css2?family=Wix+Madefor+Display:wght@400;500;600;700;800&family=Wix+Madefor+Text:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09091a;--bg2:#0e0e24;--card:#12122a;--card2:#191935;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --white:#ffffff;--muted:rgba(255,255,255,0.45);--muted2:rgba(255,255,255,0.2);
+  --blue:#226DB4;--blue-l:rgba(34,109,180,0.14);--blue-b:rgba(34,109,180,0.28);
+  --green:#089949;--green-l:rgba(8,153,73,0.12);--green-b:rgba(8,153,73,0.28);
+  --red:#E42527;--red-l:rgba(228,37,39,0.12);
+  --yellow:#F9B21D;--yellow-l:rgba(249,178,29,0.12);--yellow-b:rgba(249,178,29,0.3);
+  --r:12px;--r2:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Wix Madefor Text',sans-serif;background:var(--bg);color:var(--white);min-height:100vh;line-height:1.65;font-size:16px;}
+
+/* HEADER */
+header{padding:18px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:var(--bg);gap:12px;}
+.logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.lmark{width:34px;height:34px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;}
+.lmark svg{width:18px;height:18px;}
+.lname{font-size:17px;font-weight:800;letter-spacing:-0.3px;}
+.lname span{color:var(--blue);}
+.header-right{display:flex;align-items:center;gap:10px;}
+.hpill{font-size:12px;font-weight:600;color:var(--muted);background:var(--card2);border:1px solid var(--border);padding:5px 14px;border-radius:100px;}
+/* LANG TOGGLE */
+.lang-toggle{display:flex;background:var(--card2);border:1px solid var(--border);border-radius:100px;padding:3px;gap:2px;}
+.ltog{padding:5px 13px;border-radius:100px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);border:none;background:none;font-family:'Wix Madefor Display',sans-serif;transition:all .18s;letter-spacing:.3px;}
+.ltog.on{background:var(--blue);color:#fff;}
+
+/* MAIN */
+main{max-width:760px;margin:0 auto;padding:40px 24px 80px;}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:38px;}
+.prog-track{height:3px;background:var(--border2);border-radius:3px;margin-bottom:10px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .4s ease;}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-weight:500;}
+.prog-meta b{color:var(--blue);}
+
+/* STEP */
+.step{display:none;animation:up .3s ease both;}
+.step.active{display:block;}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.eline{width:20px;height:2px;background:var(--blue);border-radius:2px;}
+.sh{font-size:clamp(24px,4vw,34px);font-weight:800;line-height:1.2;margin-bottom:10px;}
+.sp{font-size:16px;color:var(--muted);margin-bottom:26px;line-height:1.6;max-width:580px;}
+
+/* STEPPER */
+.sc{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:16px;}
+.sc-lbl{font-size:17px;font-weight:700;}
+.sc-sub{font-size:14px;color:var(--muted);margin-top:3px;}
+.sc-ctrl{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.scb{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--border2);background:var(--card2);color:var(--white);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1;}
+.scb:hover{border-color:var(--blue);color:var(--blue);}
+.scn{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--blue);min-width:36px;text-align:center;}
+
+/* LIC PREVIEW */
+.lic-preview{background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:12px;}
+.lp-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:12px;}
+.lp-plans{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.lp-plan{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r2);padding:12px 14px;}
+.lp-plan.highlight{border-color:var(--blue);}
+.lp-plan-name{font-size:12px;font-weight:700;margin-bottom:6px;color:var(--muted);}
+.lp-plan.highlight .lp-plan-name{color:var(--blue);}
+.lp-row{font-size:11.5px;color:var(--muted);display:flex;justify-content:space-between;padding:2px 0;}
+.lp-row b{color:var(--white);font-weight:600;}
+.lp-row.driver{color:var(--yellow);}
+.lp-row.driver b{color:var(--yellow);}
+.lp-row.bonus b{color:var(--green);}
+.lp-row.waste b{color:rgba(255,255,255,.3);}
+
+/* SLIDER */
+.slider-block{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:22px 22px 18px;margin-bottom:14px;}
+.sl-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
+.sl-label{font-size:16px;font-weight:700;}
+.sl-val{font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--blue);}
+.sl-val span{font-size:13px;color:var(--muted);font-family:'Wix Madefor Display',sans-serif;margin-left:4px;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--border2);outline:none;cursor:pointer;margin-bottom:14px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px rgba(34,109,180,.25);cursor:pointer;transition:transform .15s;}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15);}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--blue);border:none;cursor:pointer;}
+.fbr-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+.fbr-rows{display:flex;flex-direction:column;gap:7px;}
+.fbr-row{display:flex;align-items:center;gap:10px;}
+.fbr-name{font-size:12px;font-weight:600;min-width:105px;color:var(--muted);}
+.fbr-track{flex:1;height:7px;border-radius:4px;background:var(--border2);overflow:visible;position:relative;}
+.fbr-free{height:100%;background:var(--green);border-radius:4px;max-width:100%;position:absolute;left:0;top:0;transition:width .3s;}
+.fbr-over{height:100%;background:var(--yellow);border-radius:0 4px 4px 0;position:absolute;top:0;transition:all .3s;}
+.fbr-info{font-family:'DM Mono',monospace;font-size:11px;min-width:110px;text-align:right;}
+.fbr-info.ok{color:var(--green);}
+.fbr-info.ov{color:var(--yellow);}
+
+/* OPTS */
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px;margin-bottom:26px;}
+.opt{padding:18px 16px;border:1.5px solid var(--border);border-radius:var(--r);background:var(--card);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;gap:10px;}
+.opt:hover{border-color:var(--border2);background:var(--card2);transform:translateY(-1px);}
+.opt.sel{border-color:var(--blue);background:var(--blue-l);}
+.opt-icon{width:36px;height:36px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;}
+.opt.sel .opt-icon{background:var(--blue-b);}
+.opt-icon svg{width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.opt.sel .opt-icon svg{stroke:var(--blue);}
+.opt-lbl{font-size:16px;font-weight:700;line-height:1.2;}
+.opt.sel .opt-lbl{color:var(--blue);}
+.opt-sub{font-size:13px;color:var(--muted);line-height:1.4;}
+
+/* CHECKS */
+.checks{display:flex;flex-direction:column;gap:9px;margin-bottom:26px;}
+.chk{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);border-radius:var(--r);background:var(--card);cursor:pointer;transition:all .18s;}
+.chk:hover{border-color:var(--border2);}
+.chk.on{border-color:var(--blue);background:var(--blue-l);}
+.chk-box{width:20px;height:20px;border-radius:5px;border:1.5px solid var(--border2);background:var(--card2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.chk.on .chk-box{background:var(--blue);border-color:var(--blue);}
+.chk.on .chk-box svg{display:block;}
+.chk-box svg{display:none;width:11px;height:11px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+.chk-body strong{font-size:16px;font-weight:700;display:block;margin-bottom:4px;}
+.chk.on .chk-body strong{color:var(--blue);}
+.chk-body span{font-size:14px;color:var(--muted);line-height:1.5;}
+
+/* NUMBERS */
+.num-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin-bottom:26px;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:18px;}
+.nc-icon{width:32px;height:32px;border-radius:7px;background:var(--card2);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.nc-icon svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.num-card label{font-size:15px;font-weight:700;display:block;margin-bottom:2px;}
+.num-card .nsub{font-size:13px;color:var(--muted);display:block;margin-bottom:12px;line-height:1.4;}
+.nstep{display:flex;align-items:center;gap:8px;}
+.nstep button{width:32px;height:32px;border-radius:7px;border:1.5px solid var(--border2);background:var(--card2);color:var(--white);font-size:16px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.nstep button:hover{border-color:var(--blue);color:var(--blue);}
+.nstep input{width:48px;height:32px;background:var(--bg2);border:1.5px solid var(--border);border-radius:6px;color:var(--white);text-align:center;font-size:15px;font-weight:700;font-family:'DM Mono',monospace;outline:none;}
+
+/* BILLING */
+.btoggle{display:flex;background:var(--card);border:1.5px solid var(--border);border-radius:100px;padding:4px;width:fit-content;margin-bottom:22px;}
+.btog{padding:9px 26px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;color:var(--muted);border:none;background:none;transition:all .2s;font-family:'Wix Madefor Display',sans-serif;}
+.btog.on{background:var(--blue);color:#fff;}
+
+/* INFO BOX */
+.ib{background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r2);padding:14px 18px;font-size:15px;color:var(--muted);line-height:1.55;margin-bottom:22px;display:flex;gap:10px;align-items:flex-start;}
+.ib svg{width:15px;height:15px;flex-shrink:0;margin-top:2px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.ib strong{color:var(--white);}
+.ib.blue{border-color:var(--blue-b);background:var(--blue-l);color:rgba(255,255,255,.75);}
+.ib.blue svg{stroke:var(--blue);}
+.ib.green{border-color:var(--green-b);background:var(--green-l);color:rgba(255,255,255,.75);}
+.ib.green svg{stroke:var(--green);}
+.ib.yellow{border-color:var(--yellow-b);background:var(--yellow-l);color:rgba(255,255,255,.75);}
+.ib.yellow svg{stroke:var(--yellow);}
+
+/* NAV */
+.nav{display:flex;gap:10px;align-items:center;margin-top:6px;}
+.btn-next{padding:13px 32px;border-radius:100px;background:var(--blue);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:'Wix Madefor Display',sans-serif;transition:all .18s;}
+.btn-next:hover{opacity:.88;transform:translateY(-1px);}
+.btn-next.grn{background:var(--green);}
+.btn-back{padding:13px 20px;border-radius:100px;background:transparent;color:var(--muted);font-size:14px;font-weight:500;border:1.5px solid var(--border2);cursor:pointer;font-family:'Wix Madefor Display',sans-serif;transition:all .18s;}
+.btn-back:hover{color:var(--white);}
+
+/* ═══ RESULT ═══ */
+#result{display:none;}
+#result.show{display:block;animation:up .4s ease both;}
+.r-hero{text-align:center;padding:4px 0 28px;}
+.r-hero h2{font-size:clamp(26px,4vw,36px);font-weight:900;margin-bottom:10px;}
+.r-hero p{font-size:16px;color:var(--muted);}
+.rec{border:1.5px solid var(--green);border-radius:var(--r);background:linear-gradient(140deg,rgba(8,153,73,.1),rgba(18,18,42,.8));padding:26px 28px;margin-bottom:18px;position:relative;overflow:hidden;}
+.rec::after{content:'';position:absolute;top:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(8,153,73,.18) 0%,transparent 70%);}
+.rec-badge{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--green);background:var(--green-l);border:1px solid var(--green-b);padding:4px 12px;border-radius:100px;margin-bottom:14px;}
+.rec-badge svg{width:12px;height:12px;stroke:var(--green);fill:none;stroke-width:2.5;}
+.rec-name{font-size:30px;font-weight:900;margin-bottom:6px;}
+.rec-why{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:20px;line-height:1.6;max-width:560px;}
+.rec-price-row{display:flex;align-items:baseline;gap:7px;margin-bottom:4px;}
+.rec-price{font-family:'DM Mono',monospace;font-size:40px;font-weight:500;color:var(--green);line-height:1;}
+.rec-psub{font-size:13px;color:var(--muted);}
+.rec-total{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:20px;}
+.rec-rows{display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(255,255,255,.08);padding-top:16px;}
+.rr{display:flex;justify-content:space-between;align-items:center;font-size:14.5px;color:rgba(255,255,255,.6);}
+.rr .rv{font-weight:600;color:var(--white);font-size:15px;}
+.rr.incl .rv{color:var(--green);font-size:12px;}
+.rr.warn .rv{color:var(--red);}
+.rr.dim .rv{color:rgba(255,255,255,.25);}
+/* LIC BLOCK */
+.lic-block{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;}
+.lb-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.lb-title svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.lb-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.lb-stat{background:var(--card2);border-radius:var(--r2);padding:12px 14px;}
+.lb-stat-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:4px;}
+.lb-stat-val{font-family:'DM Mono',monospace;font-size:22px;font-weight:500;color:var(--white);line-height:1;}
+.lb-stat-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.lb-stat-sub.grn{color:var(--green);}
+.lb-stat-sub.yel{color:var(--yellow);}
+.slots-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+.slots-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px;}
+.slot{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.slot.admin-used{background:var(--blue);color:#fff;}
+.slot.admin-bonus{background:var(--green);color:#fff;}
+.slot.agent-used{background:rgba(34,109,180,.35);border:1.5px solid var(--blue);color:var(--blue);}
+.slot.agent-free{background:var(--border);color:rgba(255,255,255,.2);}
+.slot-legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;}
+.sl-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);}
+.sl-dot{width:10px;height:10px;border-radius:3px;}
+/* MINUTES */
+.min-block{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;}
+.mb-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.mb-title svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.mb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mb-col-title{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.mb-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);padding:3px 0;}
+.mb-row .mv{font-weight:600;}
+.mb-row.free .mv{color:var(--green);}
+.mb-row.over .mv{color:var(--yellow);}
+.mb-row.cost .mv{color:var(--yellow);}
+/* PLAN CARDS */
+.cmp-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;margin-top:26px;}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;}
+.pc{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 16px;position:relative;}
+.pc.win{border-color:var(--green);background:linear-gradient(160deg,rgba(8,153,73,.1),var(--card));}
+.pc-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:3px 12px;border-radius:0 0 7px 7px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px;}
+.pc-name{font-size:15px;font-weight:800;margin-bottom:3px;}
+.pc.win .pc-name{color:var(--green);}
+.pc-lics{font-size:11px;color:var(--muted);margin-bottom:2px;}
+.pc-price{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;line-height:1.1;}
+.pc-sub{font-size:10.5px;color:var(--muted);margin-bottom:3px;}
+.pc-call{font-size:12px;font-weight:600;margin-bottom:12px;}
+.pc-feats{display:flex;flex-direction:column;gap:5px;border-top:1px solid var(--border);padding-top:12px;}
+.pf{font-size:11.5px;display:flex;gap:6px;align-items:flex-start;line-height:1.35;}
+.pf svg{width:12px;height:12px;flex-shrink:0;margin-top:1px;}
+.pf.yes svg{stroke:var(--green);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.pf.no svg{stroke:var(--red);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.pf.add svg{stroke:var(--yellow);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.pf.yes{color:rgba(255,255,255,.75);}
+.pf.no{color:rgba(255,255,255,.38);}
+.pf.add{color:rgba(249,178,29,.85);}
+/* CTA / FORM */
+.cta{background:var(--card2);border:1.5px solid var(--border);border-radius:var(--r);padding:32px 36px;}
+.cta h3{font-size:24px;font-weight:800;margin-bottom:8px;}
+.cta p{font-size:16px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btnc{padding:12px 24px;border-radius:100px;font-size:14px;font-weight:700;border:none;cursor:pointer;font-family:'Wix Madefor Display',sans-serif;text-decoration:none;display:inline-block;transition:all .18s;}
+.btnc.pri{background:var(--blue);color:#fff;}
+.btnc.pri:hover{opacity:.88;transform:translateY(-1px);}
+.btnc.sec{background:transparent;color:var(--muted);border:1.5px solid var(--border2);}
+.btnc.sec:hover{color:var(--white);border-color:var(--white);}
+/* ZOHO FORM */
+.zf-form{display:flex;flex-direction:column;gap:14px;margin-top:4px;}
+.zf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.zf-form label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);display:block;margin-bottom:6px;}
+.zf-form input[type=text],
+.zf-form textarea{width:100%;background:var(--bg2);border:1.5px solid var(--border2);border-radius:8px;color:var(--white);font-size:15px;font-family:'Wix Madefor Text',sans-serif;padding:11px 14px;outline:none;transition:border-color .15s;box-sizing:border-box;}
+.zf-form input[type=text]:focus,
+.zf-form textarea:focus{border-color:var(--blue);}
+.zf-form textarea{min-height:100px;resize:vertical;}
+.zf-submit{width:100%;padding:14px;border-radius:100px;background:var(--blue);color:#fff;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:'Wix Madefor Display',sans-serif;transition:all .18s;margin-top:4px;}
+.zf-submit:hover{opacity:.88;transform:translateY(-1px);}
+.zf-submit:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.zf-success{display:none;background:var(--green-l);border:1.5px solid var(--green-b);border-radius:var(--r2);padding:18px 20px;color:var(--white);font-size:15px;text-align:center;line-height:1.6;}
+.zf-success strong{display:block;font-size:17px;margin-bottom:4px;}
+.zf-divider{display:flex;align-items:center;gap:12px;margin:6px 0;}
+.zf-divider span{font-size:11px;color:var(--muted);white-space:nowrap;}
+.zf-divider::before,.zf-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+@media(max-width:580px){.zf-row{grid-template-columns:1fr;}}
+.btn-restart{display:flex;align-items:center;gap:6px;justify-content:center;font-size:12px;color:var(--muted);cursor:pointer;margin-top:14px;background:none;border:none;font-family:'Wix Madefor Display',sans-serif;transition:color .15s;width:100%;}
+.btn-restart:hover{color:var(--white);}
+.btn-restart svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.info-toggle{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:15px;font-weight:600;color:var(--blue);
+  background:var(--blue-l);border:1px solid var(--blue-b);
+  border-radius:100px;padding:6px 14px;cursor:pointer;
+  font-family:'Wix Madefor Display',sans-serif;transition:all .18s;
+  margin-bottom:14px;
+}
+.info-toggle:hover{background:var(--blue-b);}
+.info-toggle svg{width:13px;height:13px;flex-shrink:0;}
+.countries-box{
+  background:var(--card2);border:1.5px solid var(--border);
+  border-radius:var(--r2);padding:14px 18px;
+  font-size:15px;color:var(--muted);line-height:1.7;
+  margin-bottom:14px;
+}
+.disclaimer{font-size:11px;color:var(--muted2);margin-top:26px;line-height:1.65;border-top:1px solid var(--border);padding-top:18px;}
+
+@media(max-width:580px){
+  .plan-grid,.lb-grid,.mb-grid,.lp-plans{grid-template-columns:1fr;}
+  .opts{grid-template-columns:1fr 1fr;}
+  header{padding:14px 16px;}
+  main{padding:28px 16px 60px;}
+  .hpill{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="https://www.wolq.nl/Logos/wolq-without-cloud-logo-white.png" alt="Wolq" style="height:48px;width:auto;">
+  </div>
+  <div class="header-right">
+    <div class="hpill" data-i18n="header_pill">Zoho Voice Calculator</div>
+    <div class="lang-toggle">
+      <button class="ltog" id="lt-nl" onclick="setLang('nl')">NL</button>
+      <button class="ltog on" id="lt-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<div id="wizard">
+  <div class="prog-wrap">
+    <div class="prog-track"><div class="prog-fill" id="pfill" style="width:0%"></div></div>
+    <div class="prog-meta"><b id="pstep"></b><span id="ppct">0%</span></div>
+  </div>
+
+  <!-- STEP 1 -->
+  <div class="step active" data-step="1">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s1_eyebrow"></span></div>
+    <div class="sh" data-i18n="s1_title"></div>
+    <div class="sp" data-i18n="s1_desc"></div>
+    <div class="sc">
+      <div><div class="sc-lbl" data-i18n="s1_lbl"></div><div class="sc-sub" data-i18n="s1_sub"></div></div>
+      <div class="sc-ctrl">
+        <button class="scb" onclick="stepV('admins',-1)">−</button>
+        <div class="scn" id="d-admins">1</div>
+        <button class="scb" onclick="stepV('admins',1)">+</button>
+      </div>
+    </div>
+    <div class="ib blue">
+      <svg viewBox="0 0 16 16" stroke="currentColor"><circle cx="8" cy="8" r="6"/><line x1="8" y1="6" x2="8" y2="9"/><line x1="8" y1="10.5" x2="8" y2="11"/></svg>
+      <span data-i18n="s1_info"></span>
+    </div>
+    <div class="nav"><button class="btn-next" onclick="next()" data-i18n="btn_next"></button></div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step" data-step="2">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s2_eyebrow"></span></div>
+    <div class="sh" data-i18n="s2_title"></div>
+    <div class="sp" data-i18n="s2_desc"></div>
+
+    <!-- Agent info toggle -->
+    <button class="info-toggle" id="agent-toggle" onclick="toggleAgent()">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5.5"/><line x1="7" y1="5.5" x2="7" y2="7"/><line x1="7" y1="9" x2="7" y2="9.5"/></svg>
+      <span data-i18n="s2_show_agent"></span>
+    </button>
+    <div class="countries-box" id="agent-box" style="display:none;" data-i18n="s2_agent_detail"></div>
+
+    <!-- PhoneBridge info toggle -->
+    <button class="info-toggle" id="pb-toggle" onclick="togglePB()" style="margin-top:0;">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5.5"/><line x1="7" y1="5.5" x2="7" y2="7"/><line x1="7" y1="9" x2="7" y2="9.5"/></svg>
+      <span data-i18n="s2_show_pb"></span>
+    </button>
+    <div class="countries-box" id="pb-box" style="display:none;" data-i18n="s2_pb_detail"></div>
+
+    <div class="sc">
+      <div><div class="sc-lbl" data-i18n="s2_lbl"></div><div class="sc-sub" data-i18n="s2_sub"></div></div>
+      <div class="sc-ctrl">
+        <button class="scb" onclick="stepV('agents',-1)">−</button>
+        <div class="scn" id="d-agents">0</div>
+        <button class="scb" onclick="stepV('agents',1)">+</button>
+      </div>
+    </div>
+    <div class="lic-preview">
+      <div class="lp-title" data-i18n="lp_title"></div>
+      <div class="lp-plans" id="lp-plans"></div>
+    </div>
+    <div class="ib blue">
+      <svg viewBox="0 0 16 16" stroke="currentColor"><circle cx="8" cy="8" r="6"/><line x1="8" y1="6" x2="8" y2="9"/><line x1="8" y1="10.5" x2="8" y2="11"/></svg>
+      <span data-i18n="s2_info"></span>
+    </div>
+    <div class="nav">
+      <button class="btn-next" onclick="next()" data-i18n="btn_next"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step" data-step="3">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s3_eyebrow"></span></div>
+    <div class="sh" data-i18n="s3_title"></div>
+    <div class="sp" data-i18n="s3_desc"></div>
+    <div class="slider-block">
+      <div class="sl-top">
+        <div class="sl-label" data-i18n="s3_slider_lbl"></div>
+        <div class="sl-val" id="sv-out">0<span data-i18n="min_abbr"></span></div>
+      </div>
+      <input type="range" id="sl-out" min="0" max="5000" step="25" value="0" oninput="slideDir('out',+this.value)">
+      <div class="fbr-label" data-i18n="free_pkg_label"></div>
+      <div class="fbr-rows" id="fbr-out"></div>
+    </div>
+    <div class="ib blue">
+      <svg viewBox="0 0 16 16" stroke="currentColor"><circle cx="8" cy="8" r="6"/><line x1="8" y1="6" x2="8" y2="9"/><line x1="8" y1="10.5" x2="8" y2="11"/></svg>
+      <span data-i18n="s3_info"></span>
+    </div>
+    <div class="nav">
+      <button class="btn-next" onclick="next()" data-i18n="btn_next"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="step" data-step="4">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s4_eyebrow"></span></div>
+    <div class="sh" data-i18n="s4_title"></div>
+    <div class="sp" data-i18n="s4_desc"></div>
+    <div class="slider-block">
+      <div class="sl-top">
+        <div class="sl-label" data-i18n="s4_slider_lbl"></div>
+        <div class="sl-val" id="sv-in">0<span data-i18n="min_abbr"></span></div>
+      </div>
+      <input type="range" id="sl-in" min="0" max="10000" step="50" value="0" oninput="slideDir('in',+this.value)">
+      <div class="fbr-label" data-i18n="free_pkg_label"></div>
+      <div class="fbr-rows" id="fbr-in"></div>
+    </div>
+    <div class="ib blue">
+      <svg viewBox="0 0 16 16" stroke="currentColor"><circle cx="8" cy="8" r="6"/><line x1="8" y1="6" x2="8" y2="9"/><line x1="8" y1="10.5" x2="8" y2="11"/></svg>
+      <span data-i18n="s4_info"></span>
+    </div>
+    <div class="nav">
+      <button class="btn-next" onclick="next()" data-i18n="btn_next"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+
+  <!-- STEP 5 -->
+  <div class="step" data-step="5">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s5_eyebrow"></span></div>
+    <div class="sh" data-i18n="s5_title"></div>
+    <div class="sp" data-i18n="s5_desc"></div>
+
+    <!-- Info toggle: which countries are in the bundle -->
+    <button class="info-toggle" id="countries-toggle" onclick="toggleCountries()">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="5.5"/><line x1="7" y1="5.5" x2="7" y2="7"/><line x1="7" y1="9" x2="7" y2="9.5"/></svg>
+      <span data-i18n="s5_show_countries"></span>
+    </button>
+    <div class="countries-box" id="countries-box" style="display:none;" data-i18n="s5_countries_detail"></div>
+
+    <div class="opts">
+      <div class="opt" onclick="pick('intl','none',this);hideIntlWarn()">
+        <div class="opt-icon"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><line x1="10" y1="3" x2="10" y2="17"/><path d="M3.5 7.5Q7 9 10 10q3-1 6.5-2.5"/><path d="M3.5 12.5Q7 11 10 10q3 1 6.5 2.5"/></svg></div>
+        <div class="opt-lbl" data-i18n="s5_opt1_lbl"></div>
+        <div class="opt-sub" data-i18n="s5_opt1_sub"></div>
+      </div>
+      <div class="opt" onclick="pick('intl','world',this);showIntlWarn()">
+        <div class="opt-icon"><svg viewBox="0 0 20 20"><circle cx="10" cy="10" r="7"/><line x1="10" y1="3" x2="10" y2="17"/><path d="M3.5 7.5Q7 9 10 10q3-1 6.5-2.5"/><path d="M3.5 12.5Q7 11 10 10q3 1 6.5 2.5"/><line x1="15" y1="4" x2="17" y2="6"/><line x1="17" y1="4" x2="15" y2="6"/></svg></div>
+        <div class="opt-lbl" data-i18n="s5_opt2_lbl"></div>
+        <div class="opt-sub" data-i18n="s5_opt2_sub"></div>
+      </div>
+    </div>
+
+    <!-- International warning — shown only when 'world' is selected -->
+    <div class="ib yellow" id="intl-warn" style="display:none;margin-top:4px;">
+      <svg viewBox="0 0 16 16" stroke="currentColor"><path d="M8 2L14 13H2L8 2z"/><line x1="8" y1="7" x2="8" y2="10"/><line x1="8" y1="11.5" x2="8" y2="12"/></svg>
+      <span id="intl-warn-text"></span>
+    </div>
+
+    <div class="nav">
+      <button class="btn-next" onclick="next()" data-i18n="btn_next"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+
+  <!-- STEP 6 -->
+  <div class="step" data-step="6">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s6_eyebrow"></span></div>
+    <div class="sh" data-i18n="s6_title"></div>
+    <div class="sp" data-i18n="s6_desc"></div>
+    <div class="checks">
+      <div class="chk on" id="chk-ivr" onclick="togChk(this,'ivr')">
+        <div class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="chk-body"><strong data-i18n="f_ivr_title"></strong><span data-i18n="f_ivr_desc"></span></div>
+      </div>
+      <div class="chk" id="chk-mon" onclick="togChk(this,'monitoring')">
+        <div class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="chk-body"><strong data-i18n="f_mon_title"></strong><span data-i18n="f_mon_desc"></span></div>
+      </div>
+      <div class="chk" id="chk-dia" onclick="togChk(this,'dialer')">
+        <div class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="chk-body"><strong data-i18n="f_dia_title"></strong><span data-i18n="f_dia_desc"></span></div>
+      </div>
+      <div class="chk" id="chk-que" onclick="togChk(this,'queue')">
+        <div class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="chk-body"><strong data-i18n="f_que_title"></strong><span data-i18n="f_que_desc"></span></div>
+      </div>
+      <div class="chk" id="chk-sms" onclick="togChk(this,'sms')">
+        <div class="chk-box"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div class="chk-body"><strong data-i18n="f_sms_title"></strong><span data-i18n="f_sms_desc"></span></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn-next" onclick="next()" data-i18n="btn_next"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+
+  <!-- STEP 7 -->
+  <div class="step" data-step="7">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s7_eyebrow"></span></div>
+    <div class="sh" data-i18n="s7_title"></div>
+    <div class="sp" data-i18n="s7_desc"></div>
+    <div class="num-grid">
+      <div class="num-card">
+        <div class="nc-icon"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="12" height="12" rx="2"/><line x1="5" y1="8" x2="11" y2="8"/><line x1="8" y1="5" x2="8" y2="11"/></svg></div>
+        <label data-i18n="n_local_lbl"></label>
+        <span class="nsub" data-i18n="n_local_sub"></span>
+        <div class="nstep"><button onclick="stepN('local',-1)">−</button><input type="number" id="n-local" value="1" min="0"><button onclick="stepN('local',1)">+</button></div>
+      </div>
+      <div class="num-card">
+        <div class="nc-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><line x1="5" y1="8" x2="11" y2="8"/></svg></div>
+        <label data-i18n="n_tf_lbl"></label>
+        <span class="nsub" data-i18n="n_tf_sub"></span>
+        <div class="nstep"><button onclick="stepN('tollfree',-1)">−</button><input type="number" id="n-tollfree" value="0" min="0"><button onclick="stepN('tollfree',1)">+</button></div>
+      </div>
+      <div class="num-card">
+        <div class="nc-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="6" r="3"/><path d="M2 14c0-3 2.5-5 6-5s6 2 6 5"/></svg></div>
+        <label data-i18n="n_pers_lbl"></label>
+        <span class="nsub" data-i18n="n_pers_sub"></span>
+        <div class="nstep"><button onclick="stepN('personal',-1)">−</button><input type="number" id="n-personal" value="0" min="0"><button onclick="stepN('personal',1)">+</button></div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="btn-next" onclick="next()" data-i18n="btn_next"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+
+  <!-- STEP 8 -->
+  <div class="step" data-step="8">
+    <div class="eyebrow"><div class="eline"></div><span data-i18n="s8_eyebrow"></span></div>
+    <div class="sh" data-i18n="s8_title"></div>
+    <div class="sp" data-i18n="s8_desc"></div>
+    <div class="btoggle">
+      <button class="btog on" id="t-ann" onclick="setBill('annual')" data-i18n="bill_annual"></button>
+      <button class="btog" id="t-mon" onclick="setBill('monthly')" data-i18n="bill_monthly"></button>
+    </div>
+    <div class="ib green" id="bill-note">
+      <svg viewBox="0 0 16 16" stroke="currentColor"><path d="M13 3L6 11 3 8"/></svg>
+      <span data-i18n="bill_annual_note"></span>
+    </div>
+    <div class="nav">
+      <button class="btn-next grn" onclick="showResult()" data-i18n="btn_result"></button>
+      <button class="btn-back" onclick="back()" data-i18n="btn_back"></button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="r-hero">
+    <h2 data-i18n="r_hero_title"></h2>
+    <p id="r-sum"></p>
+  </div>
+  <div class="rec">
+    <div class="rec-badge"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg><span data-i18n="r_rec_badge"></span></div>
+    <div class="rec-name" id="r-name"></div>
+    <div class="rec-why" id="r-why"></div>
+    <div class="rec-price-row">
+      <div class="rec-price" id="r-price"></div>
+      <div class="rec-psub" id="r-psub"></div>
+    </div>
+    <div class="rec-total" id="r-total"></div>
+    <div class="rec-rows" id="r-rows"></div>
+  </div>
+  <div class="lic-block">
+    <div class="lb-title"><svg viewBox="0 0 14 14"><rect x="1" y="1" width="12" height="12" rx="2"/><line x1="4" y1="7" x2="10" y2="7"/><line x1="7" y1="4" x2="7" y2="10"/></svg><span data-i18n="lb_title"></span></div>
+    <div class="lb-grid" id="lb-grid"></div>
+    <div class="slots-label" data-i18n="slots_label"></div>
+    <div class="slots-row" id="slot-admins"></div>
+    <div class="slots-row" id="slot-agents"></div>
+    <div class="slot-legend" id="slot-legend"></div>
+  </div>
+  <div class="min-block">
+    <div class="mb-title"><svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="5"/><polyline points="7,4 7,7 9,9"/></svg><span data-i18n="mb_title"></span></div>
+    <div class="mb-grid" id="mb-grid"></div>
+  </div>
+  <div class="cmp-label" data-i18n="cmp_label"></div>
+  <div class="plan-grid" id="plan-grid"></div>
+  <div class="cta">
+    <h3 data-i18n="cta_title"></h3>
+    <p data-i18n="cta_desc"></p>
+
+    <!-- Zoho Form -->
+    <form action='https://forms.zohopublic.eu/wolq/form/ContactUs/formperma/pApUqqNcXXFwAa2SuDa5fkgFoYrgT2wkorLzuM3yO3g/htmlRecords/submit'
+          name='zf_form' id='zf_form' method='POST' accept-charset='UTF-8' enctype='multipart/form-data'
+          onsubmit='return zfSubmit(event)'>
+      <input type="hidden" name="zf_referrer_name" value="">
+      <input type="hidden" name="zf_redirect_url" value="">
+      <input type="hidden" name="zc_gad" value="">
+      <!-- Calculator samenvatting — automatisch gevuld -->
+      <input type="hidden" name="MultiLine" id="zf_summary">
+
+      <div class="zf-form">
+        <div class="zf-row">
+          <div>
+            <label data-i18n="form_firstname"></label>
+            <input type="text" name="Name_First" maxlength="255" required data-i18n-ph="form_firstname_ph">
+          </div>
+          <div>
+            <label data-i18n="form_lastname"></label>
+            <input type="text" name="Name_Last" maxlength="255" required data-i18n-ph="form_lastname_ph">
+          </div>
+        </div>
+        <div>
+          <label data-i18n="form_email"></label>
+          <input type="text" name="Email" maxlength="255" required data-i18n-ph="form_email_ph">
+        </div>
+        <button type="submit" class="zf-submit" id="zf_submit" data-i18n="form_submit"></button>
+      </div>
+    </form>
+
+    <div class="zf-success" id="zf_success">
+      <strong data-i18n="form_success_title"></strong>
+      <span data-i18n="form_success_desc"></span>
+    </div>
+
+    <div class="zf-divider" style="margin-top:20px;"><span data-i18n="form_or"></span></div>
+    <div style="text-align:center;margin-top:12px;">
+      <a href="https://www.zoho.com/voice/pricing.html" target="_blank" class="btnc sec" data-i18n="cta_btn2"></a>
+    </div>
+  </div>
+  <button class="btn-restart" onclick="restart()">
+    <svg viewBox="0 0 14 14"><polyline points="1,7 1,3 5,3"/><path d="M1 3a6 6 0 110 8"/></svg>
+    <span data-i18n="btn_restart"></span>
+  </button>
+  <div class="disclaimer" data-i18n="disclaimer"></div>
+</div>
+</main>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════
+// TRANSLATIONS
+// ══════════════════════════════════════════
+const TX = {
+  nl: {
+    header_pill:'Zoho Voice Calculator',
+    s1_eyebrow:'Stap 1 — De baas(jes)',
+    s1_title:'Hoeveel admins heb je?',
+    s1_desc:'De admin is de baas van het telefoonsysteem. Koopt nummers, bouwt belkeuzemenu\'s, bewaakt de wachtrij en houdt de credits bij. Kortom: zonder hem staat alles stil.',
+    s1_lbl:'Admins', s1_sub:'Volledige macht over het Voice portaal',
+    s1_info:'<strong>Even weten:</strong> Bij Standard en Contact Center krijg je 10 gratis telefonie-agenten per admin-licentie. Losse agenten bijkopen? Dat doet Zoho niet. Meer agenten nodig? Gewoon een extra admin-licentie — en je krijgt er meteen een extra admin gratis bij. Klinkt gek, maar zo zit het.',
+    s2_eyebrow:'Stap 2 — De bellers',
+    s2_title:'Hoeveel mensen moeten kunnen bellen?',
+    s2_desc:'Een telefonie-agent belt en wordt gebeld — gewoon vanuit de Zoho apps die ze al dagelijks gebruiken. Via de ZDialer plugin of mobiele app. Geen eigen Voice-account nodig.',
+    s2_lbl:'Telefonie-agenten', s2_sub:'Bellen via ZDialer — meer hoeven ze niet te weten',
+    s2_show_pb:'Hoe werkt de integratie met Zoho apps? (PhoneBridge)',
+    s2_hide_pb:'Verberg PhoneBridge uitleg',
+    s2_pb_detail:`<strong>PhoneBridge is de brug tussen Zoho Voice en je andere Zoho apps.</strong><br><br>
+Zonder PhoneBridge geen ZDialer, geen agenten, geen call pop-ups. Het is de technologie die Zoho Voice "levend" maakt in CRM, Helpdesk, Projecten en meer.<br><br>
+<strong>Wat PhoneBridge voor je doet:</strong><br>
+✓ ZDialer-widget verschijnt automatisch in je Zoho apps<br>
+✓ Inkomend gesprek → direct een pop-up met klantgegevens<br>
+✓ Uitgaand bellen → één klik op elk telefoonnummer in CRM<br>
+✓ Gesprekken worden automatisch gelogd als activiteit<br>
+✓ Belnotities vastleggen direct vanuit het gesprekscherm<br><br>
+<strong>Let op: PhoneBridge is alleen beschikbaar bij Standard en Contact Center.</strong> Bij Basic heb je een beperkte native integratie — maar geen ZDialer-widget en geen agenten. Dat is meteen de voornaamste reden waarom Basic voor de meeste Zoho-gebruikers niet de slimste keuze is.`,
+    s2_hide_agent:'Verberg uitleg',
+    s2_show_agent:'Wat is een telefonie-agent precies?',
+    s2_agent_detail:`<strong>Een telefonie-agent is géén apart Zoho Voice account.</strong><br><br>
+<strong>Waar een agent kan bellen en gebeld worden:</strong><br>
+✓ Vanuit Zoho apps zoals CRM, Helpdesk, Projecten, HR en meer — via de ingebouwde ZDialer widget<br>
+✓ ZDialer browser-extensie (Chrome, Firefox, Edge) — click-to-call op elke webpagina<br>
+✓ ZDialer mobiele app (iOS &amp; Android) — ook onderweg bereikbaar<br><br>
+<strong>Wat een agent NIET kan:</strong><br>
+✗ Inloggen op het Zoho Voice beheerportaal<br>
+✗ Nummers kopen of configureren<br>
+✗ IVR-menu's of wachtrijen instellen<br>
+✗ Credits beheren of rapporten downloaden<br><br>
+<strong>Belangrijk:</strong> Een agent moet al een actieve gebruiker zijn in één van de gekoppelde Zoho apps. Je importeert ze vanuit die app — je maakt ze niet opnieuw aan in Zoho Voice.`,
+    s2_info:'<strong>Losse agent-licenties bestaan niet.</strong> Heb je 11 agenten? Dan heb je 2 admin-licenties nodig. Die geven je 20 agentslots én een extra admin — gratis. We rekenen het hieronder voor je uit.',
+    lp_title:'Wat betekent dit qua licenties?',
+    lp_lics:'Licenties', lp_cost:'Maandkost', lp_admins:'Admins',
+    lp_slots:'Agentslots', lp_unused:'Onbenut', lp_bonus:'Bonus admins',
+    lp_driver:'Bepaald door', lp_noagents:'Geen gratis agenten',
+    s3_eyebrow:'Stap 3 — Hoeveel praten jullie?',
+    s3_title:'Hoeveel minuten bellen jullie uitgaand per maand?',
+    s3_desc:'Tel alle collega\'s bij elkaar op. Een schatting is prima — we zijn geen accountants. Hieronder zie je meteen of je in het vrije pakket valt, of dat er een rekening achteraan komt.',
+    s3_slider_lbl:'Uitgaande minuten per maand (totaal)',
+    s3_info:'<strong>Hoe zit dat met die vrije minuten?</strong> Het pakket is per licentie. Meer licenties = meer gratis minuten. Daarboven betaal je <strong>~€0,025 per minuut</strong> voor EU-bestemmingen. Zo simpel is het.',
+    s4_eyebrow:'Stap 4 — En hoeveel bellen ze naar jou?',
+    s4_title:'Hoeveel minuten komen er per maand binnen?',
+    s4_desc:'Basic en Standard geven je 1.000 gratis inkomende minuten per licentie per maand. Contact Center verwent je met 2.500. Daarboven: per minuut afrekenen. De balk hieronder laat direct zien hoeveel speling je hebt.',
+    s4_slider_lbl:'Inkomende minuten per maand (totaal)',
+    s4_info:'Boven het pakket betaal je <strong>~€0,0085 per minuut</strong>. Contact Center heeft beduidend meer vrije inkomende minuten — handig als jullie druk gebeld worden.',
+    s5_eyebrow:'Stap 5 — Grenzen over?',
+    s5_title:'Bellen jullie ook buiten de bundellanden?',
+    s5_desc:'De gratis belminuten gelden alleen voor vaste nummers in 12 specifieke landen (zie het tegeltje). Let op: bellen naar mobiele nummers — ook binnen die 12 landen — kan apart in rekening worden gebracht.',
+    s5_opt1_lbl:'Alleen bundellanden', s5_opt1_sub:'NL · DE · UK · FR · BE · ES · IT · DK · FI · IE · NO · CH',
+    s5_opt2_lbl:'Ook buiten de bundel', s5_opt2_sub:'Andere landen = creditkosten per minuut',
+    s5_show_countries:'Welke landen zitten er in de bundel?',
+    s5_hide_countries:'Verberg landenlijst',
+    s5_countries_detail:'<strong>12 landen met gratis belminuten (vaste nummers):</strong><br>Nederland · Duitsland · Verenigd Koninkrijk · Frankrijk · Spanje · Italië · België · Denemarken · Finland · Ierland · Noorwegen · Zwitserland<br><br>Niet in de bundel (ook al EU): Oostenrijk, Portugal, Zweden, Polen, Griekenland, en meer.<br>Let op: mobiele nummers binnen de bundellanden kunnen ook apart worden gefactureerd.',
+    s6_eyebrow:'Stap 6 — De extra\'s',
+    s6_title:'Welke functies zijn voor jou echt een must?',
+    s6_desc:'Vink aan wat je écht nodig hebt — niet wat er misschien ooit handig zou kunnen zijn. Call Monitoring, Power Dialer en Wachtrijstatistieken zitten standaard in Contact Center. Bij de andere plannen betaal je er apart voor.',
+    f_ivr_title:'Multi-level IVR — de schildwacht van je telefoonsysteem',
+    f_ivr_desc:'Klant belt in, hoort een vriendelijk menu en wordt precies op de goede plek gezet. Meerdere lagen mogelijk. Zit bij alle Enterprise plannen — geen meerprijs.',
+    f_mon_title:'Call Monitoring — de coach op de achtergrond',
+    f_mon_desc:'Supervisors luisteren live mee, fluisteren tips in het oor van je agent, of gooien zichzelf gewoon in het gesprek. Standaard bij Contact Center. Bij de rest: €10 per admin per maand extra.',
+    f_dia_title:'Power Dialer — de belmachine voor je salesteam',
+    f_dia_desc:'Laat je CRM het bellen doen. Gesprek klaar? Volgende contact staat al klaar. Minder wachten, meer gesprekken. Standaard bij Contact Center. Anders: €10 per admin per maand extra.',
+    f_que_title:'Wachtrijstatistieken — omdat gevoel geen data is',
+    f_que_desc:'Realtime dashboards met wachttijden, abandonrate en servicelevel. Voor wie écht wil weten hoe het gaat. Standaard bij Contact Center. Anders: €10 per admin per maand extra.',
+    f_sms_title:'SMS & WhatsApp — niet alleen bellen',
+    f_sms_desc:'Tweewegse SMS en WhatsApp Business via Zoho Voice. Voor als een belletje even niet uitkomt. Gewoon inbegrepen bij alle betaalde plannen.',
+    s7_eyebrow:'Stap 7 — Welk nummer krijgen ze te horen?',
+    s7_title:'Welke telefoonnummers heb je nodig?',
+    s7_desc:'Nummers huur je maandelijks via credits (1 credit ≈ €1). Goed nieuws voor Contact Center-gebruikers: één gratis lokaal nummer per licentie zit er gewoon bij.',
+    n_local_lbl:'Lokaal nummer', n_local_sub:'Gewoon een zakelijk nummer\n~€1 per nummer per maand',
+    n_tf_lbl:'0800 nummer', n_tf_sub:'Gratis binnenbellen voor klanten\n~€2 per nummer per maand',
+    n_pers_lbl:'Persoonlijk nummer', n_pers_sub:'Eén vaste lijn voor één persoon\n~€3 per nummer per maand',
+    s8_eyebrow:'Stap 8 — De rekening',
+    s8_title:'Jaarlijks of toch liever maandelijks?',
+    s8_desc:'Jaarlijks is zo\'n 15–20% goedkoper. Je zit er wel een jaar aan vast — maar als je zeker weet dat je gaat bellen (en dat weet je), is het een echte no-brainer.',
+    bill_annual:'Jaarlijks', bill_monthly:'Maandelijks',
+    bill_annual_note:'<strong>Jaarlijks</strong> — slim, voordelig en je weet precies waar je aan toe bent. Onze favoriet.',
+    bill_monthly_note:'<strong>Maandelijks</strong> — flexibel, maar je betaalt de prijs voor die vrijheid. Zo\'n 15–20% meer per maand.',
+    btn_next:'Volgende', btn_back:'Terug', btn_result:'Geef me mijn advies!', btn_restart:'Opnieuw beginnen (geen probleem)',
+    min_abbr:'min', free_pkg_label:'Vrij pakket per plan',
+    r_hero_title:'Dit is jouw Zoho Voice advies.',
+    r_rec_badge:'Ons advies',
+    r_psub:'/ mnd (abonnement)',
+    lb_title:'Hoe zit de licentiestructuur eruit?',
+    lb_lics:'Licenties', lb_cost:'Maandkost', lb_admins:'Admins', lb_slots:'Agentslots',
+    lb_driver_agents:'agenten bepalen dit', lb_driver_admins:'admins bepalen dit',
+    lb_bonus:'incl. {n} gratis bonus-admin{s}', lb_needed:'{n} benodigd',
+    lb_used:'in gebruik', lb_unused2:'onbenut',
+    slots_label:'Zo ziet jouw bezetting eruit',
+    slot_admin:'Admin (nodig)', slot_bonus:'Bonus admin (gratis meegekregen)', slot_agent:'Agent (in gebruik)', slot_free:'Agentslot (vrij)',
+    mb_title:'Wat kost het bellen echt?',
+    mb_out:'Uitgaand bellen', mb_in:'Inkomend bellen',
+    mb_total:'Jouw schatting', mb_free_pkg:'Gratis pakket', mb_overrun:'Meerkosten', mb_cost:'Kosten', mb_none:'niks — mooi!',
+    cmp_label:'Of toch liever een ander plan?',
+    cta_title:'Klinkt goed? Dan gaan we aan de slag!',
+    cta_desc:'Wolq regelt de implementatie, de koppeling met Zoho CRM en de volledige inrichting. Jij hoeft alleen maar "ja" te zeggen. We got this!',
+    cta_btn1:'Bel of mail Wolq', cta_btn2:'Zoho Voice prijzen',
+    form_firstname:'Voornaam', form_firstname_ph:'Jan',
+    form_lastname:'Achternaam', form_lastname_ph:'Jansen',
+    form_email:'E-mailadres', form_email_ph:'jan@bedrijf.nl',
+    form_submit:'Stuur mijn advies op →',
+    form_success_title:'Verstuurd! 🎉',
+    form_success_desc:'We nemen binnen één werkdag contact met je op.',
+    form_or:'of bekijk de officiële prijzen',
+    disclaimer:'Met liefde en naar beste eer en geweten samengesteld door het team van Wolq. Toch kunnen er fouten of wijzigingen in zitten — Zoho past prijzen en voorwaarden af en toe aan zonder ons te bellen. Leuk hoor. Deze calculator geeft een eerlijke indicatie, maar is geen bindend aanbod. Een officiële offerte van Wolq is pas het echte werk. Prijzen in euro (€), exclusief BTW. Belkosten zijn schattingen op basis van gangbare EU-tarieven (1 credit ≈ €1). Controleer actuele tarieven op zoho.com/voice/pricing.',
+    step_of:'Stap {cur} van {total}',
+    r_sum:'{admins} admin{as} · {agents} agent{gs} · {out} uitg. min · {inp} ink. min · {bill}',
+    bill_y:'jaarlijks', bill_m:'maandelijks',
+    rec_why_cc:'Je wilt {feats} — en terecht. Bij Contact Center zitten die er gewoon in. Als add-on bij Basic of Standard ben je uiteindelijk duurder uit. Geen kunstjes, gewoon eerlijk.',
+    rec_why_std:'Met {agents} agent{gs} heb je {lics} licenties nodig — goed voor {slots} agentslots.{bonus}',
+    rec_why_std_bonus:' En als extraatje: {n} bonus admin{s} zonder meerkosten. Zo werkt Zoho\'s licentiemodel nou eenmaal.',
+    rec_why_basic:'Voor jouw situatie — {admins} admin{as}, geen agenten, geen fancy features — doet Basic precies wat je nodig hebt voor de scherpste prijs.',
+    rec_why_std_margin:'Het prijsverschil met Basic is minimaal, maar Standard geeft je PhoneBridge-integratie, call queues en ruimte om te groeien. Voor bijna hetzelfde geld. Logische keuze.',
+    row_sub:'Abonnement — {l}× licentie (${ ppu}/mnd)',
+    row_agents_basic:'Agenten hebben ook Basic-licenties nodig ({n}×)',
+    row_slots_incl:'{n} agentslots inbegrepen ({l}× 10)',
+    row_unused:'{n} agentslot{s} onbenut — voor later',
+    row_bonus_admin:'{n} bonus admin{s} — gratis meegekregen!',
+    row_cc_incl:'Call Monitoring + Power Dialer + Queue Metrics',
+    row_addon:'Add-ons (monitoring/dialer/queue)',
+    row_free_num:'{n} gratis lokaal nummer{s} (hoort erbij bij CC)',
+    row_numbers:'Telefoonnummers',
+    row_out_over:'Uitg. belkosten ({min} min × €0,025)',
+    row_out_incl:'{min} uitg. min — valt in het vrije pakket',
+    row_in_over:'Ink. belkosten ({min} min × €0,0085)',
+    row_in_incl:'{min} ink. min — valt in het vrije pakket',
+    row_intl:'Internationaal bellen (buiten EU)',
+    intl_see_rates:'→ zie Zoho rate card',
+    intl_warn_text:'Bellen buiten de 12 bundellanden is altijd op basis van credits — de tarieven verschillen sterk per land en type nummer (vast of mobiel). Let op: ook mobiele nummers binnen de bundellanden kunnen apart in rekening worden gebracht. Zoho heeft een volledige rate card op hun website. <a href="https://www.zoho.com/voice/pricing.html" target="_blank" style="color:var(--yellow);font-weight:700;text-decoration:underline;">Bekijk de tarieven op zoho.com/voice/pricing →</a>',
+    r_total_with:'Inclusief geschatte belkosten: ~€{total}/mnd — alles bij elkaar',
+    r_total_free:'Goed nieuws: je belvolume past precies in het vrije pakket. Geen cent extra.',
+    pf_free_out:'{n} vrije uitg. min', pf_free_in:'{n} vrije ink. min',
+    pf_over_out:'+{n} min boven pakket uitg.', pf_over_in:'+{n} min boven pakket ink.',
+    pf_no_agents:'Geen gratis agenten bij Basic', pf_slots:'{n} agentslots ({l}× 10)',
+    pf_bonus_adm:'{n} bonus admin{s} gratis mee', pf_unused:'{n} slot{s} nog vrij',
+    pf_mon_incl:'Call Monitoring inbegrepen', pf_mon_add:'Call Monitoring +€10/admin/mnd',
+    pf_dia_incl:'Power Dialer inbegrepen', pf_dia_add:'Power Dialer +€10/admin/mnd',
+    pf_que_incl:'Queue Metrics inbegrepen', pf_que_add:'Queue Metrics +€10/admin/mnd',
+    pf_free_num:'{n} gratis nummer{s}',
+    pc_call_over:'+~€{n}/mnd belkosten', pc_call_free:'belkosten inbegrepen',
+    pc_lics_sub:'{l} licentie{s} · {slots} agentslots',
+    bar_free:'{n} min vrij', bar_over:'+{n} min · ~€{c}',
+    incl_lbl:'inbegrepen', plan_rec_badge:'Aanbevolen',
+    alert_intl:'Kies een optie voor internationaal bellen.',
+    driving_agents:'agenten', driving_admins:'admins',
+  },
+  en: {
+    header_pill:'Zoho Voice Calculator',
+    s1_eyebrow:'Step 1 — Who\'s running the show?',
+    s1_title:'How many admins do you need?',
+    s1_desc:'The admin is the control tower. Buys numbers, builds call menus, tames the queue and watches the credits. Without one, things get loud fast — and not in a good way.',
+    s1_lbl:'Admins', s1_sub:'The keys to the Voice kingdom',
+    s1_info:'<strong>Heads up:</strong> Standard and Contact Center bundle 10 free telephony agents into every admin license. You can\'t buy agents on their own — Zoho simply doesn\'t sell them that way. Need more agents than 10? Grab another admin license. You\'ll get more agent slots AND a second admin you didn\'t ask for. Zoho\'s quirky like that.',
+    s2_eyebrow:'Step 2 — The people actually picking up',
+    s2_title:'How many people need to be able to call?',
+    s2_desc:'A telephony agent calls and gets called — straight from the Zoho apps they already use every day. Via the ZDialer plugin or mobile app. No separate Voice account needed.',
+    s2_lbl:'Telephony agents', s2_sub:'They dial. They answer. That\'s the job.',
+    s2_show_pb:'How does the Zoho app integration work? (PhoneBridge)',
+    s2_hide_pb:'Hide PhoneBridge explanation',
+    s2_pb_detail:`<strong>PhoneBridge is the bridge between Zoho Voice and your other Zoho apps.</strong><br><br>
+Without PhoneBridge, there's no ZDialer, no agents, no call pop-ups. It's the technology that brings Zoho Voice to life inside CRM, Helpdesk, Projects and more.<br><br>
+<strong>What PhoneBridge does for you:</strong><br>
+✓ ZDialer widget appears automatically inside your Zoho apps<br>
+✓ Incoming call → instant pop-up with customer details<br>
+✓ Outbound calling → one click on any phone number in CRM<br>
+✓ Calls are automatically logged as activities<br>
+✓ Add call notes directly from the call screen<br><br>
+<strong>Important: PhoneBridge is only available on Standard and Contact Center.</strong> Basic has a limited native integration — but no ZDialer widget and no agents. That's the main reason Basic rarely makes sense for Zoho users who actually want to use Voice inside their apps.`,
+    s2_hide_agent:'Hide explanation',
+    s2_show_agent:'What exactly is a telephony agent?',
+    s2_agent_detail:`<strong>A telephony agent is not a separate Zoho Voice account.</strong><br><br>
+<strong>Where an agent can call and receive calls:</strong><br>
+✓ Inside Zoho apps like CRM, Helpdesk, Projects, HR and more — via the built-in ZDialer widget<br>
+✓ ZDialer browser extension (Chrome, Firefox, Edge) — click-to-call on any webpage<br>
+✓ ZDialer mobile app (iOS &amp; Android) — reachable on the go too<br><br>
+<strong>What an agent CANNOT do:</strong><br>
+✗ Log in to the Zoho Voice admin portal<br>
+✗ Buy or configure phone numbers<br>
+✗ Set up IVR menus or call queues<br>
+✗ Manage credits or download reports<br><br>
+<strong>Important:</strong> An agent must already be an active user in one of the connected Zoho apps. You import them from that app — you don't create them again in Zoho Voice.`,
+    s2_info:'<strong>Standalone agent licenses don\'t exist.</strong> Got 11 agents? You\'ll need 2 admin licenses — giving you 20 agent slots and a bonus admin. Silver lining: it\'s free. We\'ll crunch the numbers below.',
+    lp_title:'What does this cost you in licenses?',
+    lp_lics:'Licenses', lp_cost:'Monthly cost', lp_admins:'Admins',
+    lp_slots:'Agent slots', lp_unused:'Spare', lp_bonus:'Bonus admins',
+    lp_driver:'Dictated by', lp_noagents:'No free agents here',
+    s3_eyebrow:'Step 3 — How much do you actually talk?',
+    s3_title:'How many outbound minutes a month?',
+    s3_desc:'Add everyone up. A ballpark is absolutely fine — we\'re not going to audit you. Slide it up and watch the bars below tell you exactly what\'s free and what\'ll appear on your next invoice.',
+    s3_slider_lbl:'Outbound minutes per month (everyone combined)',
+    s3_info:'<strong>The free minutes thing:</strong> it\'s per license. More licenses = more free minutes. Go over? You\'re looking at <strong>~€0,025 per minute</strong> for EU destinations. Honestly not bad.',
+    s4_eyebrow:'Step 4 — How much do your customers talk?',
+    s4_title:'How many inbound minutes a month?',
+    s4_desc:'Basic and Standard: 1,000 free inbound minutes per license. Contact Center: a much more generous 2,500. Go past that and it\'s per-minute territory. The bar below shows exactly how much breathing room you have.',
+    s4_slider_lbl:'Inbound minutes per month (everyone combined)',
+    s4_info:'Past the limit? That\'s <strong>~€0,0085 per minute</strong>. Contact Center\'s inbound buffer is noticeably bigger — ideal if your team spends most of their day picking up.',
+    s5_eyebrow:'Step 5 — How far does your voice travel?',
+    s5_title:'Do you call outside Zoho\'s included countries?',
+    s5_desc:'Free calling minutes only apply to landlines in 12 specific countries (listed in the tile). Note: calling mobile numbers — even within those 12 countries — may be charged separately.',
+    s5_opt1_lbl:'Only bundled countries', s5_opt1_sub:'NL · DE · UK · FR · BE · ES · IT · DK · FI · IE · NO · CH',
+    s5_opt2_lbl:'Also outside the bundle', s5_opt2_sub:'Other countries = credits per minute',
+    s5_show_countries:'Which countries are in the bundle?',
+    s5_hide_countries:'Hide country list',
+    s5_countries_detail:'<strong>12 countries with free calling minutes (landlines only):</strong><br>Netherlands · Germany · United Kingdom · France · Spain · Italy · Belgium · Denmark · Finland · Ireland · Norway · Switzerland<br><br>Not included (even though EU): Austria, Portugal, Sweden, Poland, Greece, and more.<br>Note: mobile numbers within the bundled countries may also be charged separately.',
+    s6_eyebrow:'Step 6 — The bells and whistles',
+    s6_title:'Which features do you genuinely need?',
+    s6_desc:'Be honest. Tick what you\'ll actually use — not what sounds impressive in a meeting. Call Monitoring, Power Dialer and Queue Metrics are baked into Contact Center. Add them to other plans and the bill climbs.',
+    f_ivr_title:'Multi-level IVR — your phone system\'s very own bouncer',
+    f_ivr_desc:'Customer calls in, hears a tidy menu and ends up exactly where they should be. Multiple layers of menus. Built into every Enterprise plan. Costs you nothing extra.',
+    f_mon_title:'Call Monitoring — eyes and ears on the floor',
+    f_mon_desc:'Managers listen in live, whisper guidance to agents without the customer hearing, or just barge in and take over. Classic. Included in Contact Center. Costs €10 per admin per month on other plans.',
+    f_dia_title:'Power Dialer — your sales team\'s best friend',
+    f_dia_desc:'Your CRM dials. Your agent talks. Call wraps up, next one queues automatically. More conversations, less sitting around. Included in Contact Center. €10 per admin per month on other plans.',
+    f_que_title:'Queue Metrics — because "it felt busy today" isn\'t a KPI',
+    f_que_desc:'Live dashboards with wait times, abandon rates and service levels. For managers who want numbers, not vibes. Included in Contact Center. €10 per admin per month elsewhere.',
+    f_sms_title:'SMS & WhatsApp — for when calling feels like a lot',
+    f_sms_desc:'Two-way SMS and WhatsApp Business, built right into Zoho Voice. Sometimes a quick message does the trick. Included on all paid plans. No fuss.',
+    s7_eyebrow:'Step 7 — What number do they see?',
+    s7_title:'Which phone numbers do you need?',
+    s7_desc:'Numbers are rented monthly using Zoho credits (~€1 per credit). Contact Center users get one free local number per license thrown in. Every little helps.',
+    n_local_lbl:'Local number', n_local_sub:'Your standard business line\n~€1 per number per month',
+    n_tf_lbl:'Toll-free number', n_tf_sub:'Free for callers. ~€2 for you.\n~€2 per number per month',
+    n_pers_lbl:'Personal number', n_pers_sub:'One person, one dedicated line\n~€3 per number per month',
+    s8_eyebrow:'Step 8 — Pay now or pay more later',
+    s8_title:'Annual or monthly?',
+    s8_desc:'Annual is around 15–20% cheaper. Yes, you\'re committing to a year. But if you\'re setting up Zoho Voice, you\'re not doing it for three weeks. It\'s a no-brainer. We said it.',
+    bill_annual:'Annually', bill_monthly:'Monthly',
+    bill_annual_note:'<strong>Annual:</strong> cheaper, simpler, no monthly invoice to worry about. Our favourite. We\'d pick it every time.',
+    bill_monthly_note:'<strong>Monthly:</strong> flexible, yes. But about 15–20% pricier. Worth it if you\'re still figuring things out.',
+    btn_next:'Next up', btn_back:'Go back', btn_result:'Hit me with the recommendation!', btn_restart:'Start from scratch (totally fine)',
+    min_abbr:'min', free_pkg_label:'What\'s free per plan',
+    r_hero_title:'Here\'s the plan. Literally.',
+    r_rec_badge:'Our pick',
+    r_psub:'/ month (subscription)',
+    lb_title:'The license structure, unpacked',
+    lb_lics:'Licenses', lb_cost:'Monthly cost', lb_admins:'Admins', lb_slots:'Agent slots',
+    lb_driver_agents:'agents are calling the shots', lb_driver_admins:'admins are calling the shots',
+    lb_bonus:'including {n} bonus admin{s} — on the house', lb_needed:'{n} needed',
+    lb_used:'in use', lb_unused2:'spare',
+    slots_label:'Your seats, visualised',
+    slot_admin:'Admin (needed)', slot_bonus:'Bonus admin (came with the deal)', slot_agent:'Agent (active)', slot_free:'Agent slot (waiting to be filled)',
+    mb_title:'The honest cost of your calls',
+    mb_out:'Outbound', mb_in:'Inbound',
+    mb_total:'Your estimate', mb_free_pkg:'Free minutes', mb_overrun:'Overage', mb_cost:'Cost', mb_none:'nothing. Result.',
+    cmp_label:'See how all three plans stack up',
+    cta_title:'Like what you see? Let\'s make it happen.',
+    cta_desc:'Wolq does the implementation, Zoho CRM integration and full configuration. You bring the enthusiasm. We\'ll handle everything else. We got this.',
+    cta_btn1:'Get in touch with Wolq', cta_btn2:'Zoho Voice pricing',
+    form_firstname:'First name', form_firstname_ph:'John',
+    form_lastname:'Last name', form_lastname_ph:'Smith',
+    form_email:'Email address', form_email_ph:'john@company.com',
+    form_submit:'Send me my recommendation →',
+    form_success_title:'Done! 🎉',
+    form_success_desc:'We\'ll get back to you within one business day.',
+    form_or:'or check the official pricing',
+    disclaimer:'Crafted with care and best intentions by the Wolq team. That said, errors can slip through — Zoho updates prices and terms occasionally without giving us a heads-up. Rude, but there it is. This calculator gives an honest indication, not a binding quote. An official proposal from Wolq is the real deal. Prices in euros (€), VAT not included. Call rates are EU estimates (1 credit ≈ €1). Always worth a final check at zoho.com/voice/pricing.',
+    step_of:'Step {cur} of {total}',
+    r_sum:'{admins} admin{as} · {agents} agent{gs} · {out} outbound min · {inp} inbound min · {bill}',
+    bill_y:'annually', bill_m:'monthly',
+    rec_why_cc:'You need {feats} — solid choices. Contact Center includes all of them as standard. Bolting them onto Basic or Standard as add-ons costs more in the long run. No smoke and mirrors, just honest maths.',
+    rec_why_std:'With {agents} agent{gs} you need {lics} licenses — that covers {slots} agent slots.{bonus}',
+    rec_why_std_bonus:' You also pick up {n} extra admin{s} for free. Zoho\'s licensing is quirky like that.',
+    rec_why_basic:'Your setup — {admins} admin{as}, no agents, nothing fancy — is exactly what Basic is built for. Lean, fast and priced right.',
+    rec_why_std_margin:'Barely more expensive than Basic, but Standard brings PhoneBridge, call queues and room to grow. For nearly the same money. Standard it is.',
+    row_sub:'Subscription — {l}× license (${ ppu}/month)',
+    row_agents_basic:'Agents need their own Basic licenses ({n}×)',
+    row_slots_incl:'{n} agent slots — included ({l}× 10)',
+    row_unused:'{n} slot{s} spare — room to grow',
+    row_bonus_admin:'{n} bonus admin{s} — came with the deal',
+    row_cc_incl:'Call Monitoring + Power Dialer + Queue Metrics',
+    row_addon:'Add-ons (monitoring / dialer / queue)',
+    row_free_num:'{n} free local number{s} — included with CC',
+    row_numbers:'Phone numbers',
+    row_out_over:'Outbound overage ({min} min × €0,025)',
+    row_out_incl:'{min} outbound min — all within the free package',
+    row_in_over:'Inbound overage ({min} min × €0,0085)',
+    row_in_incl:'{min} inbound min — all within the free package',
+    row_intl:'International calling (outside EU)',
+    intl_see_rates:'→ see Zoho rate card',
+    intl_warn_text:'Calls outside the 12 bundled countries are always credit-based — rates vary significantly by country and number type (landline vs mobile). Note: mobile numbers even within the bundled countries may be charged separately. Check the full rate card on Zoho\'s website. <a href="https://www.zoho.com/voice/pricing.html" target="_blank" style="color:var(--yellow);font-weight:700;text-decoration:underline;">See rates at zoho.com/voice/pricing →</a>',
+    r_total_with:'Add call costs: ~€{total}/month all in.',
+    r_total_free:'Your call volume fits entirely within the free package. Zero overage. That\'s the dream.',
+    pf_free_out:'{n} free outbound min', pf_free_in:'{n} free inbound min',
+    pf_over_out:'+{n} min over package (outbound)', pf_over_in:'+{n} min over package (inbound)',
+    pf_no_agents:'No free agents on Basic', pf_slots:'{n} agent slots ({l}× 10)',
+    pf_bonus_adm:'{n} bonus admin{s} — on the house', pf_unused:'{n} slot{s} spare',
+    pf_mon_incl:'Call Monitoring — included', pf_mon_add:'Call Monitoring — +€10/admin/month',
+    pf_dia_incl:'Power Dialer — included', pf_dia_add:'Power Dialer — +€10/admin/month',
+    pf_que_incl:'Queue Metrics — included', pf_que_add:'Queue Metrics — +€10/admin/month',
+    pf_free_num:'{n} free number{s}',
+    pc_call_over:'+~€{n}/month call costs', pc_call_free:'call costs? covered.',
+    pc_lics_sub:'{l} license{s} · {slots} agent slots',
+    bar_free:'{n} min free', bar_over:'+{n} min · ~€{c}',
+    incl_lbl:'included', plan_rec_badge:'Our pick',
+    alert_intl:'Pick one — we need to know where your calls are going.',
+    driving_agents:'agents', driving_admins:'admins',
+  }
+};
+
+let lang = 'en';
+
+function t(key, vars){
+  let s = (TX[lang][key] || TX.nl[key] || key);
+  if(vars) Object.keys(vars).forEach(k=>{ s=s.replaceAll('{'+k+'}',vars[k]); });
+  return s;
+}
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    const v=TX[lang][k];
+    if(v!==undefined) el.innerHTML=v;
+  });
+  updProg();
+  renderLicPreview();
+  renderBars('out',S.outMin,5000);
+  renderBars('in',S.inMin,10000);
+  setBill(S.billing,true);
+  // Refresh intl warning if visible
+  if(S.intl==='world') showIntlWarn();
+  // Reset countries toggle label
+  const ctBtn=document.getElementById('countries-toggle');
+  const ctBox=document.getElementById('countries-box');
+  if(ctBtn&&ctBox) ctBtn.querySelector('span').textContent=ctBox.style.display==='none'?t('s5_show_countries'):t('s5_hide_countries');
+  const agBtn=document.getElementById('agent-toggle');
+  const agBox=document.getElementById('agent-box');
+  if(agBtn&&agBox) agBtn.querySelector('span').textContent=agBox.style.display==='none'?t('s2_show_agent'):t('s2_hide_agent');
+  const pbBtn=document.getElementById('pb-toggle');
+  const pbBox=document.getElementById('pb-box');
+  if(pbBtn&&pbBox) pbBtn.querySelector('span').textContent=pbBox.style.display==='none'?t('s2_show_pb'):t('s2_hide_pb');
+  if(document.getElementById('result').classList.contains('show')) showResult();
+  // Update form placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    const v = TX[lang][k];
+    if(v) el.placeholder = v;
+  });
+}
+function setLang(l){
+  lang=l;
+  document.getElementById('lt-nl').classList.toggle('on',l==='nl');
+  document.getElementById('lt-en').classList.toggle('on',l==='en');
+  document.documentElement.lang=l;
+  applyLang();
+}
+
+// ══════════════════════════════════════════
+// STATE & PRICING
+// ══════════════════════════════════════════
+const S={admins:1,agents:0,outMin:0,inMin:0,intl:null,
+  features:{ivr:true,monitoring:false,dialer:false,queue:false,sms:false},
+  nums:{local:1,tollfree:0,personal:0},billing:'annual'};
+const TOTAL=8; let cur=1;
+
+const PL={
+  basic:   {n:'Basic',          pa:34,pm:39,fO:250, fI:1000,fNC:0,hasAgents:false},
+  standard:{n:'Standard',       pa:49,pm:59,fO:250, fI:1000,fNC:0,hasAgents:true},
+  cc:      {n:'Contact Center', pa:74,pm:79,fO:500, fI:2500,fNC:1,hasAgents:true}
+};
+const R_OUT=0.025,R_IN=0.0085;
+
+function numLics(k){ return k==='basic'?S.admins:Math.max(S.admins,Math.ceil((S.agents||0)/10)); }
+function licDriver(k){
+  if(k==='basic') return 'admins';
+  const byA=S.admins, byG=Math.ceil((S.agents||0)/10);
+  return byG>byA?'agents':byA>byG?'admins':'equal';
+}
+function pl(k){ const plan=PL[k]; return plan; }
+function ppu(k){ return S.billing==='annual'?PL[k].pa:PL[k].pm; }
+function fmt(n){ return Math.round(n).toLocaleString(lang==='nl'?'nl-NL':'en-US'); }
+function plur(n,one,more){ return n===1?one:more; }
+
+// ══════════════════════════════════════════
+// PROGRESS
+// ══════════════════════════════════════════
+function updProg(){
+  const p=Math.round(((cur-1)/TOTAL)*100);
+  document.getElementById('pfill').style.width=p+'%';
+  document.getElementById('pstep').textContent=t('step_of',{cur,total:TOTAL});
+  document.getElementById('ppct').textContent=p+'%';
+}
+
+// ══════════════════════════════════════════
+// NAV
+// ══════════════════════════════════════════
+function next(){
+  if(cur===5&&!S.intl){alert(t('alert_intl'));return;}
+  if(cur>=TOTAL){showResult();return;}
+  goTo(cur+1);
+}
+function back(){ if(cur>1)goTo(cur-1); }
+function goTo(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  const t2=document.querySelector(`.step[data-step="${n}"]`);
+  if(t2){t2.classList.add('active');cur=n;}
+  updProg();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2)renderLicPreview();
+  if(n===3)renderBars('out',S.outMin,5000);
+  if(n===4)renderBars('in',S.inMin,10000);
+}
+
+// ══════════════════════════════════════════
+// INPUTS
+// ══════════════════════════════════════════
+function stepV(k,d){ S[k]=Math.max(k==='agents'?0:1,S[k]+d); document.getElementById('d-'+k).textContent=S[k]; renderLicPreview(); }
+function slideDir(dir,v){
+  S[dir==='out'?'outMin':'inMin']=v;
+  document.getElementById('sv-'+dir).innerHTML=fmt(v)+'<span>'+t('min_abbr')+'</span>';
+  renderBars(dir,v,dir==='out'?5000:10000);
+}
+function pick(k,v,el){ el.closest('.opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');S[k]=v; }
+function showIntlWarn(){
+  const el=document.getElementById('intl-warn');
+  const txt=document.getElementById('intl-warn-text');
+  if(!el||!txt)return;
+  txt.innerHTML=t('intl_warn_text');
+  el.style.display='flex';
+}
+function toggleCountries(){
+  const box=document.getElementById('countries-box');
+  const btn=document.getElementById('countries-toggle');
+  const open=box.style.display==='none';
+  box.style.display=open?'block':'none';
+  btn.querySelector('span').textContent=open?t('s5_hide_countries'):t('s5_show_countries');
+}
+function toggleAgent(){
+  const box=document.getElementById('agent-box');
+  const btn=document.getElementById('agent-toggle');
+  const open=box.style.display==='none';
+  box.style.display=open?'block':'none';
+  btn.querySelector('span').textContent=open?t('s2_hide_agent'):t('s2_show_agent');
+}
+function togglePB(){
+  const box=document.getElementById('pb-box');
+  const btn=document.getElementById('pb-toggle');
+  const open=box.style.display==='none';
+  box.style.display=open?'block':'none';
+  btn.querySelector('span').textContent=open?t('s2_hide_pb'):t('s2_show_pb');
+}
+function hideIntlWarn(){
+  const el=document.getElementById('intl-warn');
+  if(el) el.style.display='none';
+}
+function togChk(el,k){ if(k==='ivr')return; S.features[k]=!S.features[k]; el.classList.toggle('on',S.features[k]); }
+function stepN(tp,d){ const el=document.getElementById('n-'+tp); el.value=Math.max(0,(+el.value||0)+d); S.nums[tp]=+el.value; }
+['local','tollfree','personal'].forEach(tp=>{ document.getElementById('n-'+tp).addEventListener('input',function(){S.nums[tp]=Math.max(0,+this.value||0);}); });
+function setBill(b,silent){
+  S.billing=b;
+  if(!silent){ document.getElementById('t-ann').classList.toggle('on',b==='annual'); document.getElementById('t-mon').classList.toggle('on',b==='monthly'); }
+  const note=document.getElementById('bill-note');
+  if(b==='annual'){
+    note.className='ib green';
+    note.innerHTML=`<svg viewBox="0 0 16 16" fill="none" stroke="#089949" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L6 11 3 8"/></svg><span>${t('bill_annual_note')}</span>`;
+  } else {
+    note.className='ib yellow';
+    note.innerHTML=`<svg viewBox="0 0 16 16" fill="none" stroke="#F9B21D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2L14 13H2L8 2z"/><line x1="8" y1="7" x2="8" y2="10"/><line x1="8" y1="11.5" x2="8" y2="12"/></svg><span>${t('bill_monthly_note')}</span>`;
+  }
+}
+
+// ══════════════════════════════════════════
+// LIC PREVIEW
+// ══════════════════════════════════════════
+function renderLicPreview(){
+  const el=document.getElementById('lp-plans'); if(!el)return;
+  ['basic','standard','cc'].forEach((k,i)=>{
+    const l=numLics(k), driver=licDriver(k);
+    const p2=PL[k], pp=ppu(k);
+    const slots=p2.hasAgents?l*10:0;
+    const used=p2.hasAgents?Math.min(S.agents,slots):0;
+    const waste=slots-used;
+    const bonus=p2.hasAgents&&driver==='agents'?l-S.admins:0;
+    const div=el.children[i];
+    div.className='lp-plan'+(k==='standard'?' highlight':'');
+    div.innerHTML=`
+      <div class="lp-plan-name">${p2.n}</div>
+      <div class="lp-row ${driver==='agents'?'driver':''}"><span>${t('lp_lics')}</span><b>${l}×</b></div>
+      <div class="lp-row"><span>${t('lp_cost')}</span><b>€${l*pp}/mnd</b></div>
+      <div class="lp-row"><span>${t('lp_admins')}</span><b>${l}</b></div>
+      ${p2.hasAgents?`
+        <div class="lp-row"><span>${t('lp_slots')}</span><b>${slots}</b></div>
+        <div class="lp-row ${waste>0?'waste':''}"><span>${t('lp_unused')}</span><b>${waste}</b></div>
+        ${bonus>0?`<div class="lp-row bonus"><span>${t('lp_bonus')}</span><b>+${bonus}</b></div>`:''}
+        ${driver==='agents'?`<div class="lp-row driver"><span>${t('lp_driver')}</span><b>${t('driving_agents')}</b></div>`:''}
+      `:`<div class="lp-row"><span>${t('lp_noagents')}</span></div>`}
+    `;
+  });
+}
+
+// ══════════════════════════════════════════
+// BARS
+// ══════════════════════════════════════════
+function renderBars(dir,val,max){
+  const el=document.getElementById('fbr-'+dir); if(!el)return;
+  const rate=dir==='out'?R_OUT:R_IN;
+  el.innerHTML=['basic','standard','cc'].map(k=>{
+    const l=numLics(k), free=(dir==='out'?PL[k].fO:PL[k].fI)*l;
+    const over=Math.max(0,val-free);
+    const freePct=max>0?Math.min(100,(free/max)*100):0;
+    const usedPct=max>0?Math.min(freePct,(val/max)*100):0;
+    const overPct=max>0&&over>0?Math.min(100-usedPct,(over/max)*100):0;
+    const infoTxt=over>0?t('bar_over',{n:fmt(over),c:(over*rate).toFixed(2)}):t('bar_free',{n:fmt(free)});
+    return `<div class="fbr-row">
+      <div class="fbr-name">${PL[k].n} (${l}×)</div>
+      <div class="fbr-track">
+        <div class="fbr-free" style="width:${usedPct}%"></div>
+        ${over>0?`<div class="fbr-over" style="left:${usedPct}%;width:${overPct}%"></div>`:''}
+      </div>
+      <div class="fbr-info ${over>0?'ov':'ok'}">${infoTxt}</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// CALC
+// ══════════════════════════════════════════
+function calc(k){
+  const plan=PL[k], p=ppu(k), l=numLics(k), driver=licDriver(k);
+  const slots=plan.hasAgents?l*10:0, used=plan.hasAgents?Math.min(S.agents,slots):0;
+  const waste=slots-used, bonus=plan.hasAgents&&driver==='agents'?l-S.admins:0;
+  const planCost=p*l;
+  let agentExtra=k==='basic'&&S.agents>0?S.agents*p:0;
+  let addon=0;
+  if(k!=='cc'){ if(S.features.monitoring)addon+=10*S.admins; if(S.features.dialer)addon+=10*S.admins; if(S.features.queue)addon+=10*S.admins; }
+  const freeLocal=k==='cc'?l:0;
+  const numCost=Math.max(0,S.nums.local-freeLocal)*1+S.nums.tollfree*2+S.nums.personal*3;
+  const fO=plan.fO*l, fI=plan.fI*l;
+  const ovO=Math.max(0,S.outMin-fO), ovI=Math.max(0,S.inMin-fI);
+  const callC=ovO*R_OUT+ovI*R_IN;
+  const sub=planCost+agentExtra+addon+numCost;
+  return{k,plan,l,p,driver,slots,used,waste,bonus,planCost,agentExtra,addon,numCost,fO,fI,ovO,ovI,callC,freeLocal,sub,total:sub+callC};
+}
+
+// ══════════════════════════════════════════
+// RECOMMEND
+// ══════════════════════════════════════════
+function recommend(){
+  const needCC=S.features.monitoring||S.features.dialer||S.features.queue;
+  if(needCC){
+    const ff=[];
+    if(S.features.monitoring)ff.push(lang==='nl'?'Call Monitoring':'Call Monitoring');
+    if(S.features.dialer)ff.push('Power Dialer');
+    if(S.features.queue)ff.push(lang==='nl'?'Wachtrijstatistieken':'Queue Metrics');
+    return{w:'cc',reason:t('rec_why_cc',{feats:ff.join(', ')})};
+  }
+  if(S.agents>0){
+    const l=numLics('standard'), driver=licDriver('standard');
+    const bonus=driver==='agents'?l-S.admins:0;
+    const bonusTxt=bonus>0?t('rec_why_std_bonus',{n:bonus,s:bonus>1?'s':''}):'';
+    return{w:'standard',reason:t('rec_why_std',{agents:S.agents,gs:S.agents>1?'s':'',lics:l,slots:l*10,bonus:bonusTxt})};
+  }
+  const cb=calc('basic'),cs=calc('standard');
+  if(cs.total-cb.total<15) return{w:'standard',reason:t('rec_why_std_margin')};
+  return{w:'basic',reason:t('rec_why_basic',{admins:S.admins,as:S.admins>1?'s':''})};
+}
+
+// ══════════════════════════════════════════
+// SHOW RESULT
+// ══════════════════════════════════════════
+function showResult(){
+  S.nums.local=+document.getElementById('n-local').value||0;
+  S.nums.tollfree=+document.getElementById('n-tollfree').value||0;
+  S.nums.personal=+document.getElementById('n-personal').value||0;
+  const{w,reason}=recommend();
+  const R={basic:calc('basic'),standard:calc('standard'),cc:calc('cc')};
+  const rec=R[w];
+
+  document.getElementById('wizard').style.display='none';
+  const re=document.getElementById('result');
+  re.style.display='block'; re.classList.add('show');
+
+  // Apply static translations to result
+  document.querySelectorAll('#result [data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    const v=TX[lang][k];
+    if(v!==undefined) el.innerHTML=v;
+  });
+
+  document.getElementById('r-sum').textContent=t('r_sum',{
+    admins:S.admins,as:S.admins>1?'s':'',
+    agents:S.agents,gs:S.agents!==1?'s':'',
+    out:fmt(S.outMin),inp:fmt(S.inMin),
+    bill:t(S.billing==='annual'?'bill_y':'bill_m')
+  });
+  document.getElementById('r-name').textContent=rec.plan.n;
+  document.getElementById('r-why').textContent=reason;
+  document.getElementById('r-price').textContent='€'+fmt(rec.sub);
+  document.getElementById('r-psub').textContent=t('r_psub');
+  document.getElementById('r-total').textContent=rec.callC>0
+    ?t('r_total_with',{total:fmt(rec.total)})
+    :t('r_total_free');
+
+  // REC ROWS
+  const rows=[];
+  rows.push({l:t('row_sub',{l:rec.l,' ppu':rec.p}),v:rec.planCost});
+  if(rec.k==='basic'&&S.agents>0) rows.push({l:t('row_agents_basic',{n:S.agents}),v:rec.agentExtra,warn:true});
+  else if(S.agents>0&&rec.plan.hasAgents){
+    rows.push({l:t('row_slots_incl',{n:rec.slots,l:rec.l}),incl:true});
+    if(rec.waste>0) rows.push({l:t('row_unused',{n:rec.waste,s:rec.waste>1?'s':''}),dim:true});
+    if(rec.bonus>0) rows.push({l:t('row_bonus_admin',{n:rec.bonus,s:rec.bonus>1?'s':''}),incl:true});
+  }
+  if(rec.k==='cc') rows.push({l:t('row_cc_incl'),incl:true});
+  else if(rec.addon>0) rows.push({l:t('row_addon'),v:rec.addon});
+  if(rec.freeLocal>0) rows.push({l:t('row_free_num',{n:rec.freeLocal,s:rec.freeLocal>1?'s':''}),incl:true});
+  if(rec.numCost>0) rows.push({l:t('row_numbers'),v:rec.numCost});
+  rows.push(rec.ovO>0?{l:t('row_out_over',{min:fmt(rec.ovO)}),v:rec.ovO*R_OUT}:{l:t('row_out_incl',{min:fmt(S.outMin)}),incl:true});
+  rows.push(rec.ovI>0?{l:t('row_in_over',{min:fmt(rec.ovI)}),v:rec.ovI*R_IN}:{l:t('row_in_incl',{min:fmt(S.inMin)}),incl:true});
+  if(S.intl==='world') rows.push({l:t('row_intl'),intl:true});
+
+  document.getElementById('r-rows').innerHTML=rows.map(r=>{
+    if(r.incl) return`<div class="rr incl"><span>${r.l}</span><span class="rv">${t('incl_lbl')}</span></div>`;
+    if(r.warn) return`<div class="rr warn"><span>${r.l}</span><span class="rv">€${fmt(r.v)}</span></div>`;
+    if(r.dim)  return`<div class="rr dim"><span>${r.l}</span><span class="rv">—</span></div>`;
+    if(r.intl) return`<div class="rr dim"><span>${r.l}</span><span class="rv" style="color:var(--yellow);font-size:11px;">${t('intl_see_rates')}</span></div>`;
+    return`<div class="rr"><span>${r.l}</span><span class="rv">€${fmt(r.v)}</span></div>`;
+  }).join('');
+
+  // LICENSE BLOCK
+  document.getElementById('lb-grid').innerHTML=`
+    <div class="lb-stat">
+      <div class="lb-stat-label">${t('lb_lics')}</div>
+      <div class="lb-stat-val">${rec.l}</div>
+      <div class="lb-stat-sub ${rec.driver==='agents'?'yel':''}">${t(rec.driver==='agents'?'lb_driver_agents':'lb_driver_admins')}</div>
+    </div>
+    <div class="lb-stat">
+      <div class="lb-stat-label">${t('lb_cost')}</div>
+      <div class="lb-stat-val">€${fmt(rec.planCost)}</div>
+      <div class="lb-stat-sub">$${rec.p} × ${rec.l}</div>
+    </div>
+    <div class="lb-stat">
+      <div class="lb-stat-label">${t('lb_admins')}</div>
+      <div class="lb-stat-val">${rec.l}</div>
+      <div class="lb-stat-sub ${rec.bonus>0?'grn':''}">${rec.bonus>0?t('lb_bonus',{n:rec.bonus,s:rec.bonus>1?'s':''}):t('lb_needed',{n:S.admins})}</div>
+    </div>
+    <div class="lb-stat">
+      <div class="lb-stat-label">${t('lb_slots')}</div>
+      <div class="lb-stat-val">${rec.slots}</div>
+      <div class="lb-stat-sub">${rec.used} ${t('lb_used')} · ${rec.waste} ${t('lb_unused2')}</div>
+    </div>`;
+
+  // SLOTS
+  const sA=document.getElementById('slot-admins'), sG=document.getElementById('slot-agents');
+  sA.innerHTML=''; sG.innerHTML='';
+  for(let i=0;i<rec.l;i++){
+    const d=document.createElement('div');
+    d.className='slot '+(i<S.admins?'admin-used':'admin-bonus');
+    d.textContent='A';
+    sA.appendChild(d);
+  }
+  if(rec.slots>0){
+    const show=Math.min(rec.slots,50);
+    for(let i=0;i<show;i++){
+      const d=document.createElement('div');
+      d.className='slot '+(i<rec.used?'agent-used':'agent-free');
+      d.textContent=i<rec.used?'M':'·';
+      sG.appendChild(d);
+    }
+    if(rec.slots>50) sG.innerHTML+=`<div style="font-size:11px;color:var(--muted);align-self:center;">+${rec.slots-50}</div>`;
+  }
+  document.getElementById('slot-legend').innerHTML=`
+    <div class="sl-item"><div class="sl-dot" style="background:var(--blue)"></div>${t('slot_admin')}</div>
+    ${rec.bonus>0?`<div class="sl-item"><div class="sl-dot" style="background:var(--green)"></div>${t('slot_bonus')}</div>`:''}
+    ${rec.slots>0?`<div class="sl-item"><div class="sl-dot" style="background:rgba(34,109,180,.35);border:1px solid var(--blue)"></div>${t('slot_agent')}</div><div class="sl-item"><div class="sl-dot" style="background:var(--border2)"></div>${t('slot_free')}</div>`:''}
+  `;
+
+  // MINUTES
+  const mbR=R[w];
+  document.getElementById('mb-grid').innerHTML=`
+    <div>
+      <div class="mb-col-title">${t('mb_out')}</div>
+      <div class="mb-row"><span>${t('mb_total')}</span><span class="mv">${fmt(S.outMin)} ${t('min_abbr')}</span></div>
+      <div class="mb-row free"><span>${t('mb_free_pkg')} (${mbR.l}× ${PL[w].fO})</span><span class="mv">${fmt(mbR.fO)} ${t('min_abbr')}</span></div>
+      ${mbR.ovO>0?`<div class="mb-row over"><span>${t('mb_overrun')}</span><span class="mv">${fmt(mbR.ovO)} ${t('min_abbr')}</span></div><div class="mb-row cost"><span>${t('mb_cost')} (× $${R_OUT})</span><span class="mv">~$${(mbR.ovO*R_OUT).toFixed(2)}/mnd</span></div>`:`<div class="mb-row free"><span>${t('mb_overrun')}</span><span class="mv">${t('mb_none')}</span></div>`}
+    </div>
+    <div>
+      <div class="mb-col-title">${t('mb_in')}</div>
+      <div class="mb-row"><span>${t('mb_total')}</span><span class="mv">${fmt(S.inMin)} ${t('min_abbr')}</span></div>
+      <div class="mb-row free"><span>${t('mb_free_pkg')} (${mbR.l}× ${PL[w].fI})</span><span class="mv">${fmt(mbR.fI)} ${t('min_abbr')}</span></div>
+      ${mbR.ovI>0?`<div class="mb-row over"><span>${t('mb_overrun')}</span><span class="mv">${fmt(mbR.ovI)} ${t('min_abbr')}</span></div><div class="mb-row cost"><span>${t('mb_cost')} (× $${R_IN})</span><span class="mv">~$${(mbR.ovI*R_IN).toFixed(2)}/mnd</span></div>`:`<div class="mb-row free"><span>${t('mb_overrun')}</span><span class="mv">${t('mb_none')}</span></div>`}
+    </div>`;
+
+  // PLAN GRID
+  document.getElementById('plan-grid').innerHTML=['basic','standard','cc'].map(k=>{
+    const r=R[k], win=k===w;
+    const callClr=r.callC>0?'var(--yellow)':'var(--green)';
+    const callTxt=r.callC>0?t('pc_call_over',{n:fmt(r.callC)}):t('pc_call_free');
+    const licsSub=t('pc_lics_sub',{l:r.l,s:r.l>1?'s':'',slots:r.slots});
+    const feats=getFeats(k,r);
+    return`<div class="pc ${win?'win':''}">
+      ${win?`<div class="pc-badge">${t('plan_rec_badge')}</div>`:''}
+      <div class="pc-name">${r.plan.n}</div>
+      <div class="pc-lics">${licsSub}</div>
+      <div class="pc-price">€${fmt(r.sub)}<span style="font-size:12px;color:var(--muted);font-family:'Wix Madefor Display',sans-serif"> /${lang==='nl'?'mnd':'mo'}</span></div>
+      <div class="pc-sub">${t(S.billing==='annual'?'bill_annual':'bill_monthly').toLowerCase()}</div>
+      <div class="pc-call" style="color:${callClr}">${callTxt}</div>
+      <div class="pc-feats">${feats.map(f=>`<div class="pf ${f.c}"><svg viewBox="0 0 12 12">${icn(f.c)}</svg>${f.t}</div>`).join('')}</div>
+    </div>`;
+  }).join('');
+
+  window.scrollTo({top:0,behavior:'smooth'});
+  prefillForm(rec, w);
+}
+
+function icn(c){ return c==='yes'?'<polyline points="2,6 5,9 10,3"/>':c==='no'?'<line x1="2" y1="2" x2="10" y2="10"/><line x1="10" y1="2" x2="2" y2="10"/>':'<line x1="6" y1="2" x2="6" y2="10"/><line x1="2" y1="6" x2="10" y2="6"/>'; }
+
+function getFeats(k,r){
+  const f=[];
+  f.push({c:'yes',t:t('pf_free_out',{n:fmt(r.fO)})});
+  f.push({c:'yes',t:t('pf_free_in',{n:fmt(r.fI)})});
+  if(r.ovO>0)f.push({c:'no',t:t('pf_over_out',{n:fmt(r.ovO)})});
+  if(r.ovI>0)f.push({c:'no',t:t('pf_over_in',{n:fmt(r.ovI)})});
+  if(k==='basic')f.push({c:S.agents>0?'no':'yes',t:t('pf_no_agents')});
+  else{
+    f.push({c:'yes',t:t('pf_slots',{n:r.slots,l:r.l})});
+    if(r.bonus>0)f.push({c:'yes',t:t('pf_bonus_adm',{n:r.bonus,s:r.bonus>1?'s':''})});
+    if(r.waste>0)f.push({c:'no',t:t('pf_unused',{n:r.waste,s:r.waste>1?'s':''})});
+  }
+  if(S.features.monitoring)f.push({c:k==='cc'?'yes':'add',t:t(k==='cc'?'pf_mon_incl':'pf_mon_add')});
+  if(S.features.dialer)    f.push({c:k==='cc'?'yes':'add',t:t(k==='cc'?'pf_dia_incl':'pf_dia_add')});
+  if(S.features.queue)     f.push({c:k==='cc'?'yes':'add',t:t(k==='cc'?'pf_que_incl':'pf_que_add')});
+  if(k==='cc'&&r.freeLocal>0)f.push({c:'yes',t:t('pf_free_num',{n:r.freeLocal,s:r.freeLocal>1?'s':''})});
+  return f;
+}
+
+// ══════════════════════════════════════════
+// ZOHO FORM
+// ══════════════════════════════════════════
+function buildSummary(rec, w){
+  const lines = [
+    `Recommended plan : ${rec.plan.n}`,
+    `Licenses         : ${rec.l}×`,
+    `Admins           : ${S.admins}`,
+    `Agents           : ${S.agents}`,
+    `Outbound minutes : ${fmt(S.outMin)}/mo`,
+    `Inbound minutes  : ${fmt(S.inMin)}/mo`,
+    `Billing          : ${S.billing === 'annual' ? 'Annual' : 'Monthly'}`,
+    `Estimated cost   : €${fmt(rec.sub)}/mo`,
+    `Features         : ${Object.entries(S.features).filter(([,v])=>v).map(([k])=>k).join(', ')}`,
+    `International    : ${S.intl === 'world' ? 'Outside bundle' : 'Bundle countries only'}`,
+    `Numbers          : local ${S.nums.local}, toll-free ${S.nums.tollfree}, personal ${S.nums.personal}`,
+    `Call overage     : ${rec.callC > 0 ? '~€'+fmt(rec.callC)+'/mo' : 'none — within free package'}`,
+  ];
+  return lines.join('\n');
+}
+
+function prefillForm(rec, w){
+  const el = document.getElementById('zf_summary');
+  if(el) el.value = buildSummary(rec, w);
+  // Also apply i18n placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph');
+    const v = TX[lang][k];
+    if(v) el.placeholder = v;
+  });
+}
+
+async function zfSubmit(e){
+  e.preventDefault();
+  const btn = document.getElementById('zf_submit');
+  btn.disabled = true;
+  btn.textContent = lang === 'nl' ? 'Bezig met verzenden…' : 'Sending…';
+  try {
+    const form = document.getElementById('zf_form');
+    const data = new FormData(form);
+    await fetch(form.action, { method:'POST', body:data, mode:'no-cors' });
+    form.style.display = 'none';
+    const success = document.getElementById('zf_success');
+    success.style.display = 'block';
+    // Apply translations to success box
+    success.querySelector('[data-i18n="form_success_title"]').textContent = t('form_success_title');
+    success.querySelector('[data-i18n="form_success_desc"]').textContent = t('form_success_desc');
+  } catch(err){
+    btn.disabled = false;
+    btn.textContent = t('form_submit');
+    alert(lang === 'nl' ? 'Er ging iets mis. Probeer het opnieuw.' : 'Something went wrong. Please try again.');
+  }
+  return false;
+}
+
+// ══════════════════════════════════════════
+// RESTART
+// ══════════════════════════════════════════
+function restart(){
+  Object.assign(S,{admins:1,agents:0,outMin:0,inMin:0,intl:null,
+    features:{ivr:true,monitoring:false,dialer:false,queue:false,sms:false},
+    nums:{local:1,tollfree:0,personal:0},billing:'annual'});
+  ['admins','agents'].forEach(k=>document.getElementById('d-'+k).textContent=k==='admins'?1:0);
+  ['out','in'].forEach(d=>{
+    document.getElementById('sl-'+d).value=0;
+    document.getElementById('sv-'+d).innerHTML='0<span>'+t('min_abbr')+'</span>';
+  });
+  document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+  document.querySelectorAll('.chk').forEach(c=>{c.classList.remove('on');if(c.id==='chk-ivr')c.classList.add('on');});
+  document.getElementById('n-local').value=1;
+  document.getElementById('n-tollfree').value=0;
+  document.getElementById('n-personal').value=0;
+  document.getElementById('t-ann').classList.add('on');
+  document.getElementById('t-mon').classList.remove('on');
+  document.getElementById('result').style.display='none';
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('wizard').style.display='block';
+  cur=1; goTo(1);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+const lpEl=document.getElementById('lp-plans');
+['basic','standard','cc'].forEach(()=>{ const d=document.createElement('div'); lpEl.appendChild(d); });
+setLang('en');
+</script>
+</body>
+</html>
