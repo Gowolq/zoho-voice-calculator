@@ -583,9 +583,10 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
     <p data-i18n="cta_desc"></p>
 
     <!-- Zoho Form -->
+    <iframe name="zf_iframe" style="display:none;"></iframe>
     <form action='https://forms.zohopublic.eu/wolq/form/ContactUs/formperma/pApUqqNcXXFwAa2SuDa5fkgFoYrgT2wkorLzuM3yO3g/htmlRecords/submit'
           name='zf_form' id='zf_form' method='POST' accept-charset='UTF-8' enctype='multipart/form-data'
-          onsubmit='return zfSubmit(event)'>
+          target="zf_iframe" onsubmit="setTimeout(zfShowSuccess,800)">
       <input type="hidden" name="zf_referrer_name" value="">
       <input type="hidden" name="zf_redirect_url" value="">
       <input type="hidden" name="zc_gad" value="">
@@ -1394,27 +1395,12 @@ function prefillForm(rec, w){
   });
 }
 
-async function zfSubmit(e){
-  e.preventDefault();
-  const btn = document.getElementById('zf_submit');
-  btn.disabled = true;
-  btn.textContent = lang === 'nl' ? 'Bezig met verzenden…' : 'Sending…';
-  try {
-    const form = document.getElementById('zf_form');
-    const data = new FormData(form);
-    await fetch(form.action, { method:'POST', body:data, mode:'no-cors' });
-    form.style.display = 'none';
-    const success = document.getElementById('zf_success');
-    success.style.display = 'block';
-    // Apply translations to success box
-    success.querySelector('[data-i18n="form_success_title"]').textContent = t('form_success_title');
-    success.querySelector('[data-i18n="form_success_desc"]').textContent = t('form_success_desc');
-  } catch(err){
-    btn.disabled = false;
-    btn.textContent = t('form_submit');
-    alert(lang === 'nl' ? 'Er ging iets mis. Probeer het opnieuw.' : 'Something went wrong. Please try again.');
-  }
-  return false;
+function zfShowSuccess(){
+  document.getElementById('zf_form').style.display = 'none';
+  const success = document.getElementById('zf_success');
+  success.style.display = 'block';
+  success.querySelector('[data-i18n="form_success_title"]').textContent = t('form_success_title');
+  success.querySelector('[data-i18n="form_success_desc"]').textContent = t('form_success_desc');
 }
 
 // ══════════════════════════════════════════
