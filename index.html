@@ -177,14 +177,15 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .rec-total{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:20px;}
 .rec-rows{display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(255,255,255,.08);padding-top:16px;}
 .rr{display:flex;justify-content:space-between;align-items:center;font-size:14.5px;color:rgba(255,255,255,.6);padding:2px 0;}
+.rr-sect{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.3);margin-top:14px;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.07);}
+.rr-totaal{display:flex;justify-content:space-between;align-items:flex-end;margin-top:18px;padding-top:14px;border-top:2px solid rgba(255,255,255,.2);}
+.rt-lbl{font-size:16px;font-weight:700;color:var(--white);}
+.rt-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.rt-val{font-family:'DM Mono',monospace;font-size:32px;font-weight:500;color:var(--green);}
 .rr .rv{font-weight:600;color:var(--white);font-size:15px;}
 .rr.incl .rv{color:var(--green);font-size:12px;}
 .rr.warn .rv{color:var(--red);}
 .rr.dim .rv{color:rgba(255,255,255,.25);}
-.rr-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:14px;margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.06);}
-.rr-total-line{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:2px solid rgba(255,255,255,.15);}
-.rr-total-line span{font-size:15px;font-weight:700;color:var(--white);}
-.rv-total{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--green);}
 /* LIC BLOCK */
 .lic-block{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;}
 .lb-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
@@ -1371,68 +1372,51 @@ function showResult(){
   });
   document.getElementById('r-name').textContent=rec.plan.n;
   document.getElementById('r-why').textContent=reason;
-  document.getElementById('r-price').textContent='€'+fmt(rec.sub);
+  document.getElementById('r-price').textContent='€'+fmt(rec.total);
   document.getElementById('r-psub').textContent=t('r_psub');
-  document.getElementById('r-total').textContent=rec.callC>0
-    ?t('r_total_with',{total:fmt(rec.total)})
-    :t('r_total_free');
+  document.getElementById('r-total').textContent='';
 
-  // REC ROWS — bon-stijl kostenoverzicht
-  const mndLbl = lang==='nl'?'/mnd':lang==='de'?'/Monat':'/mo';
-  const inbegrLbl = lang==='nl'?'inbegrepen':lang==='de'?'enthalten':'included';
-  const gratisBij = lang==='nl'?'gratis inbegrepen bij CC':lang==='de'?'kostenlos im CC':'free with CC';
+  // REC ROWS — bon met 3 secties + totaalregel
+  const inbl = lang==='nl'?'inbegrepen':lang==='de'?'enthalten':'included';
+  const rr = (l,v,c='') => `<div class="rr ${c}"><span>${l}</span><span class="rv">${v}</span></div>`;
+  const sec = (l) => `<div class="rr-sect">${l}</div>`;
+  let bon = '';
 
-  // Sectie 1: Licenties
-  let html = '';
-  const secLbl = (lbl) => `<div class="rr-section">${lbl}</div>`;
-  const rRow = (lbl,val,cls='') => `<div class="rr ${cls}"><span>${lbl}</span><span class="rv">${val}</span></div>`;
-
-  // ── LICENTIES ──
-  html += secLbl(lang==='nl'?'Licenties':lang==='de'?'Lizenzen':'Licences');
-  html += rRow(t('row_sub',{l:rec.l,ppu:rec.p}), '€'+fmt(rec.planCost));
-  if(rec.k==='basic'&&S.agents>0) html += rRow(t('row_agents_basic',{n:S.agents}), '€'+fmt(rec.agentExtra), 'warn');
-  else if(S.agents>0&&rec.plan.hasAgents){
-    html += rRow(t('row_slots_incl',{n:rec.slots,l:rec.l}), inbegrLbl, 'incl');
-    if(rec.bonus>0) html += rRow(t('row_bonus_admin',{n:rec.bonus,s:rec.bonus>1?'s':''}), inbegrLbl, 'incl');
+  bon += sec(lang==='nl'?'Licentiekosten':lang==='de'?'Lizenzkosten':'Licence costs');
+  bon += rr(t('row_sub',{l:rec.l,ppu:rec.p}), '€'+fmt(rec.planCost));
+  if(rec.k==='basic'&&S.agents>0){
+    bon += rr(t('row_agents_basic',{n:S.agents}), '€'+fmt(rec.agentExtra), 'warn');
+  } else if(S.agents>0&&rec.plan.hasAgents){
+    bon += rr(t('row_slots_incl',{n:rec.slots,l:rec.l}), inbl, 'incl');
+    if(rec.bonus>0) bon += rr(t('row_bonus_admin',{n:rec.bonus,s:rec.bonus>1?'s':''}), inbl, 'incl');
   }
 
-  // ── ADD-ONS ──
-  const hasAddons = (rec.k==='cc') || rec.addon>0 || rec.freeLocal>0 || rec.numCost>0 || S.intl==='world';
-  if(hasAddons){
-    html += secLbl(lang==='nl'?'Extra's & nummers':lang==='de'?'Extras & Nummern':'Add-ons & numbers');
-    if(rec.k==='cc') html += rRow(t('row_cc_incl'), inbegrLbl, 'incl');
-    else if(rec.addon>0) html += rRow(t('row_addon'), '€'+fmt(rec.addon));
-    if(rec.freeLocal>0) html += rRow(t('row_free_num',{n:rec.freeLocal,s:rec.freeLocal>1?'s':''}), gratisBij, 'incl');
-    if(rec.numCost>0) html += rRow(t('row_numbers'), '€'+fmt(rec.numCost));
-    if(S.intl==='world') html += rRow(t('row_intl'), t('intl_see_rates'), 'dim');
+  const hasExtras = rec.k==='cc'||rec.addon>0||rec.freeLocal>0||rec.numCost>0||S.intl==='world';
+  if(hasExtras){
+    bon += sec(lang==='nl'?"Extra\'s & nummers":lang==='de'?'Extras & Nummern':'Add-ons & numbers');
+    if(rec.k==='cc') bon += rr(t('row_cc_incl'), inbl, 'incl');
+    else if(rec.addon>0) bon += rr(t('row_addon'), '€'+fmt(rec.addon));
+    if(rec.freeLocal>0) bon += rr(t('row_free_num',{n:rec.freeLocal,s:rec.freeLocal>1?'s':''}), inbl, 'incl');
+    if(rec.numCost>0) bon += rr(t('row_numbers'), '€'+fmt(rec.numCost));
+    if(S.intl==='world') bon += rr(t('row_intl'), t('intl_see_rates'), 'dim');
   }
 
-  // ── BELKOSTEN ──
-  html += secLbl(lang==='nl'?'Belkosten':lang==='de'?'Gesprächskosten':'Call costs');
-  if(rec.ovO>0){
-    html += rRow(t('row_out_over',{min:fmt(rec.ovO)}), '€'+fmt(rec.ovO*R_OUT));
-  } else {
-    html += rRow(
-      (lang==='nl'?'Uitgaand bellen ('+fmt(S.outMin)+' min — in vrij pakket)':lang==='de'?'Ausgehend ('+fmt(S.outMin)+' Min — im Freipaket)':'Outbound ('+fmt(S.outMin)+' min — within free package)'),
-      inbegrLbl, 'incl'
-    );
-  }
-  if(rec.ovI>0){
-    html += rRow(t('row_in_over',{min:fmt(rec.ovI)}), '€'+fmt(rec.ovI*R_IN));
-  } else {
-    html += rRow(
-      (lang==='nl'?'Inkomend bellen ('+fmt(S.inMin)+' min — in vrij pakket)':lang==='de'?'Eingehend ('+fmt(S.inMin)+' Min — im Freipaket)':'Inbound ('+fmt(S.inMin)+' min — within free package)'),
-      inbegrLbl, 'incl'
-    );
-  }
+  bon += sec(lang==='nl'?'Belkosten':lang==='de'?'Gesprächskosten':'Call costs');
+  if(rec.ovO>0) bon += rr(t('row_out_over',{min:fmt(rec.ovO)}), '€'+fmt(rec.ovO*R_OUT));
+  else bon += rr(lang==='nl'?`Uitgaand (${fmt(S.outMin)} min)`:lang==='de'?`Ausgehend (${fmt(S.outMin)} Min)`:`Outbound (${fmt(S.outMin)} min)`, inbl, 'incl');
+  if(rec.ovI>0) bon += rr(t('row_in_over',{min:fmt(rec.ovI)}), '€'+fmt(rec.ovI*R_IN));
+  else bon += rr(lang==='nl'?`Inkomend (${fmt(S.inMin)} min)`:lang==='de'?`Eingehend (${fmt(S.inMin)} Min)`:`Inbound (${fmt(S.inMin)} min)`, inbl, 'incl');
 
-  // ── TOTAAL STREEP ──
-  html += `<div class="rr-total-line">
-    <span>${lang==='nl'?'Totaal per maand':lang==='de'?'Gesamt pro Monat':'Total per month'}</span>
-    <span class="rv-total">€${fmt(rec.total)}</span>
+  const totLbl = lang==='nl'?'Totaal per maand':lang==='de'?'Gesamt pro Monat':'Total per month';
+  const subSplit = lang==='nl'?`€${fmt(rec.planCost)} licenties + €${fmt(rec.addon+rec.numCost+(rec.k==='basic'?rec.agentExtra:0))} extra\'s + €${fmt(rec.callC)} belkosten`
+    :lang==='de'?`€${fmt(rec.planCost)} Lizenzen + €${fmt(rec.addon+rec.numCost)} Extras + €${fmt(rec.callC)} Gesprächskosten`
+    :`€${fmt(rec.planCost)} licences + €${fmt(rec.addon+rec.numCost)} add-ons + €${fmt(rec.callC)} call costs`;
+  bon += `<div class="rr-totaal">
+    <div><div class="rt-lbl">${totLbl}</div><div class="rt-sub">${subSplit}</div></div>
+    <div class="rt-val">€${fmt(rec.total)}</div>
   </div>`;
 
-  document.getElementById('r-rows').innerHTML = html;
+  document.getElementById('r-rows').innerHTML = bon;
 
   // LICENSE BLOCK
   document.getElementById('lb-grid').innerHTML=`
