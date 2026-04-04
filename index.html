@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -302,8 +301,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
   <div class="header-right">
     <div class="hpill" data-i18n="header_pill">Zoho Voice Calculator</div>
     <div class="lang-toggle">
-      <button class="ltog" id="lt-nl" onclick="setLang('nl')">NL</button>
-      <button class="ltog on" id="lt-en" onclick="setLang('en')">EN</button>
+      <button class="ltog on" id="lt-nl" onclick="setLang('nl')">NL</button>
+      <button class="ltog" id="lt-en" onclick="setLang('en')">EN</button>
       <button class="ltog" id="lt-de" onclick="setLang('de')">DE</button>
     </div>
   </div>
@@ -1531,7 +1530,7 @@ function restart(){
 // ══════════════════════════════════════════
 const lpEl=document.getElementById('lp-plans');
 ['basic','standard','cc'].forEach(()=>{ const d=document.createElement('div'); lpEl.appendChild(d); });
-setLang('en');
+setLang('nl');
 </script>
 </body>
 </html>
