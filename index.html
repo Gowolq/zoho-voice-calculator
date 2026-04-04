@@ -176,11 +176,15 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .rec-psub{font-size:13px;color:var(--muted);}
 .rec-total{font-size:12px;color:rgba(255,255,255,.4);margin-bottom:20px;}
 .rec-rows{display:flex;flex-direction:column;gap:7px;border-top:1px solid rgba(255,255,255,.08);padding-top:16px;}
-.rr{display:flex;justify-content:space-between;align-items:center;font-size:14.5px;color:rgba(255,255,255,.6);}
+.rr{display:flex;justify-content:space-between;align-items:center;font-size:14.5px;color:rgba(255,255,255,.6);padding:2px 0;}
 .rr .rv{font-weight:600;color:var(--white);font-size:15px;}
 .rr.incl .rv{color:var(--green);font-size:12px;}
 .rr.warn .rv{color:var(--red);}
 .rr.dim .rv{color:rgba(255,255,255,.25);}
+.rr-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:14px;margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid rgba(255,255,255,.06);}
+.rr-total-line{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:14px;border-top:2px solid rgba(255,255,255,.15);}
+.rr-total-line span{font-size:15px;font-weight:700;color:var(--white);}
+.rv-total{font-family:'DM Mono',monospace;font-size:26px;font-weight:500;color:var(--green);}
 /* LIC BLOCK */
 .lic-block{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:20px 22px;margin-bottom:18px;}
 .lb-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
@@ -1373,30 +1377,62 @@ function showResult(){
     ?t('r_total_with',{total:fmt(rec.total)})
     :t('r_total_free');
 
-  // REC ROWS
-  const rows=[];
-  rows.push({l:t('row_sub',{l:rec.l,ppu:rec.p}),v:rec.planCost});
-  if(rec.k==='basic'&&S.agents>0) rows.push({l:t('row_agents_basic',{n:S.agents}),v:rec.agentExtra,warn:true});
-  else if(S.agents>0&&rec.plan.hasAgents){
-    rows.push({l:t('row_slots_incl',{n:rec.slots,l:rec.l}),incl:true});
-    if(rec.waste>0) rows.push({l:t('row_unused',{n:rec.waste,s:rec.waste>1?'s':''}),dim:true});
-    if(rec.bonus>0) rows.push({l:t('row_bonus_admin',{n:rec.bonus,s:rec.bonus>1?'s':''}),incl:true});
-  }
-  if(rec.k==='cc') rows.push({l:t('row_cc_incl'),incl:true});
-  else if(rec.addon>0) rows.push({l:t('row_addon'),v:rec.addon});
-  if(rec.freeLocal>0) rows.push({l:t('row_free_num',{n:rec.freeLocal,s:rec.freeLocal>1?'s':''}),incl:true});
-  if(rec.numCost>0) rows.push({l:t('row_numbers'),v:rec.numCost});
-  rows.push(rec.ovO>0?{l:t('row_out_over',{min:fmt(rec.ovO)}),v:rec.ovO*R_OUT}:{l:t('row_out_incl',{min:fmt(S.outMin)}),incl:true});
-  rows.push(rec.ovI>0?{l:t('row_in_over',{min:fmt(rec.ovI)}),v:rec.ovI*R_IN}:{l:t('row_in_incl',{min:fmt(S.inMin)}),incl:true});
-  if(S.intl==='world') rows.push({l:t('row_intl'),intl:true});
+  // REC ROWS — bon-stijl kostenoverzicht
+  const mndLbl = lang==='nl'?'/mnd':lang==='de'?'/Monat':'/mo';
+  const inbegrLbl = lang==='nl'?'inbegrepen':lang==='de'?'enthalten':'included';
+  const gratisBij = lang==='nl'?'gratis inbegrepen bij CC':lang==='de'?'kostenlos im CC':'free with CC';
 
-  document.getElementById('r-rows').innerHTML=rows.map(r=>{
-    if(r.incl) return`<div class="rr incl"><span>${r.l}</span><span class="rv">${t('incl_lbl')}</span></div>`;
-    if(r.warn) return`<div class="rr warn"><span>${r.l}</span><span class="rv">€${fmt(r.v)}</span></div>`;
-    if(r.dim)  return`<div class="rr dim"><span>${r.l}</span><span class="rv">—</span></div>`;
-    if(r.intl) return`<div class="rr dim"><span>${r.l}</span><span class="rv" style="color:var(--yellow);font-size:11px;">${t('intl_see_rates')}</span></div>`;
-    return`<div class="rr"><span>${r.l}</span><span class="rv">€${fmt(r.v)}</span></div>`;
-  }).join('');
+  // Sectie 1: Licenties
+  let html = '';
+  const secLbl = (lbl) => `<div class="rr-section">${lbl}</div>`;
+  const rRow = (lbl,val,cls='') => `<div class="rr ${cls}"><span>${lbl}</span><span class="rv">${val}</span></div>`;
+
+  // ── LICENTIES ──
+  html += secLbl(lang==='nl'?'Licenties':lang==='de'?'Lizenzen':'Licences');
+  html += rRow(t('row_sub',{l:rec.l,ppu:rec.p}), '€'+fmt(rec.planCost));
+  if(rec.k==='basic'&&S.agents>0) html += rRow(t('row_agents_basic',{n:S.agents}), '€'+fmt(rec.agentExtra), 'warn');
+  else if(S.agents>0&&rec.plan.hasAgents){
+    html += rRow(t('row_slots_incl',{n:rec.slots,l:rec.l}), inbegrLbl, 'incl');
+    if(rec.bonus>0) html += rRow(t('row_bonus_admin',{n:rec.bonus,s:rec.bonus>1?'s':''}), inbegrLbl, 'incl');
+  }
+
+  // ── ADD-ONS ──
+  const hasAddons = (rec.k==='cc') || rec.addon>0 || rec.freeLocal>0 || rec.numCost>0 || S.intl==='world';
+  if(hasAddons){
+    html += secLbl(lang==='nl'?'Extra's & nummers':lang==='de'?'Extras & Nummern':'Add-ons & numbers');
+    if(rec.k==='cc') html += rRow(t('row_cc_incl'), inbegrLbl, 'incl');
+    else if(rec.addon>0) html += rRow(t('row_addon'), '€'+fmt(rec.addon));
+    if(rec.freeLocal>0) html += rRow(t('row_free_num',{n:rec.freeLocal,s:rec.freeLocal>1?'s':''}), gratisBij, 'incl');
+    if(rec.numCost>0) html += rRow(t('row_numbers'), '€'+fmt(rec.numCost));
+    if(S.intl==='world') html += rRow(t('row_intl'), t('intl_see_rates'), 'dim');
+  }
+
+  // ── BELKOSTEN ──
+  html += secLbl(lang==='nl'?'Belkosten':lang==='de'?'Gesprächskosten':'Call costs');
+  if(rec.ovO>0){
+    html += rRow(t('row_out_over',{min:fmt(rec.ovO)}), '€'+fmt(rec.ovO*R_OUT));
+  } else {
+    html += rRow(
+      (lang==='nl'?'Uitgaand bellen ('+fmt(S.outMin)+' min — in vrij pakket)':lang==='de'?'Ausgehend ('+fmt(S.outMin)+' Min — im Freipaket)':'Outbound ('+fmt(S.outMin)+' min — within free package)'),
+      inbegrLbl, 'incl'
+    );
+  }
+  if(rec.ovI>0){
+    html += rRow(t('row_in_over',{min:fmt(rec.ovI)}), '€'+fmt(rec.ovI*R_IN));
+  } else {
+    html += rRow(
+      (lang==='nl'?'Inkomend bellen ('+fmt(S.inMin)+' min — in vrij pakket)':lang==='de'?'Eingehend ('+fmt(S.inMin)+' Min — im Freipaket)':'Inbound ('+fmt(S.inMin)+' min — within free package)'),
+      inbegrLbl, 'incl'
+    );
+  }
+
+  // ── TOTAAL STREEP ──
+  html += `<div class="rr-total-line">
+    <span>${lang==='nl'?'Totaal per maand':lang==='de'?'Gesamt pro Monat':'Total per month'}</span>
+    <span class="rv-total">€${fmt(rec.total)}</span>
+  </div>`;
+
+  document.getElementById('r-rows').innerHTML = html;
 
   // LICENSE BLOCK
   document.getElementById('lb-grid').innerHTML=`
