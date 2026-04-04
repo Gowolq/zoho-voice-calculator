@@ -387,7 +387,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         <div class="sl-label" data-i18n="s3_slider_lbl"></div>
         <div class="sl-val" id="sv-out">0<span data-i18n="min_abbr"></span></div>
       </div>
-      <input type="range" id="sl-out" min="0" max="5000" step="25" value="0" oninput="slideDir('out',+this.value)">
+      <input type="range" id="sl-out" min="0" max="300" step="5" value="0" oninput="slidePerUser('out',+this.value)">
+      <div id="sl-out-calc" style="font-size:14px;color:var(--muted);margin-bottom:16px;font-family:'DM Mono',monospace;"></div>
       <div class="fbr-label" data-i18n="free_pkg_label"></div>
       <div class="fbr-rows" id="fbr-out"></div>
     </div>
@@ -411,7 +412,8 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
         <div class="sl-label" data-i18n="s4_slider_lbl"></div>
         <div class="sl-val" id="sv-in">0<span data-i18n="min_abbr"></span></div>
       </div>
-      <input type="range" id="sl-in" min="0" max="10000" step="50" value="0" oninput="slideDir('in',+this.value)">
+      <input type="range" id="sl-in" min="0" max="300" step="5" value="0" oninput="slidePerUser('in',+this.value)">
+      <div id="sl-in-calc" style="font-size:14px;color:var(--muted);margin-bottom:16px;font-family:'DM Mono',monospace;"></div>
       <div class="fbr-label" data-i18n="free_pkg_label"></div>
       <div class="fbr-rows" id="fbr-in"></div>
     </div>
@@ -659,13 +661,13 @@ const TX = {
     lp_driver:'Bepaald door', lp_noagents:'Geen gratis agenten',
     s3_eyebrow:'Stap 3 — Hoeveel jullie babbelen',
     s3_title:'Hoeveel minuten bellen jullie uitgaand per maand?',
-    s3_desc:'Tel iedereen bij elkaar op en schat het zo eerlijk mogelijk. We controleren het toch niet. Hieronder zie je meteen of je binnen het vrije pakket blijft — of dat Zoho aan het einde van de maand blij is met jou.',
-    s3_slider_lbl:'Uitgaande minuten per maand (iedereen samen)',
+    s3_desc:'Hoeveel minuten belt een gemiddelde medewerker per dag uitgaand? 60 minuten = 1 uur. De tool rekent automatisch het maandtotaal voor je uit op basis van het aantal gebruikers en 22 werkdagen.',
+    s3_slider_lbl:'Gemiddeld uitgaand bellen per gebruiker per dag',
     s3_info:'<strong>Hoe zit het met die vrije minuten?</strong> Die zijn per licentie. Meer licenties = meer gratis minuten. Kom je erboven? Dan betaal je <strong>~€0,025 per minuut</strong> voor EU-bestemmingen. Eerlijk gezegd valt dat best mee.',
     s4_eyebrow:'Stap 4 — Hoeveel klanten jou bellen',
     s4_title:'Hoeveel minuten komen er per maand bij jullie binnen?',
-    s4_desc:'Basic en Standard: 1.000 gratis inkomende minuten per licentie per maand. Contact Center verwent je met 2.500. Daarboven betaal je per minuut. De balk hieronder laat meteen zien of je een probleem hebt.',
-    s4_slider_lbl:'Inkomende minuten per maand (iedereen samen)',
+    s4_desc:'Hoeveel minuten wordt een gemiddelde medewerker per dag gebeld? Schat eerlijk — liever iets ruimer dan te krap. De tool berekent het maandtotaal en toont meteen of je binnen het gratis pakket blijft.',
+    s4_slider_lbl:'Gemiddeld inkomend bellen per gebruiker per dag',
     s4_info:'Boven het pakket betaal je <strong>~€0,0085 per minuut</strong>. Klinkt weinig, maar bij 5.000 extra minuten tikt dat aardig aan. Contact Center heeft beduidend meer buffer — fijn als jullie druk gebeld worden.',
     s5_eyebrow:'Stap 5 — Hoe ver reikt jullie stem?',
     s5_title:'Bellen jullie ook buiten de bundellanden?',
@@ -792,13 +794,13 @@ const TX = {
     lp_driver:'Dictated by', lp_noagents:'No free agents here',
     s3_eyebrow:'Step 3 — How much do you all talk?',
     s3_title:'How many outbound minutes per month?',
-    s3_desc:'Add everyone up and make a reasonable estimate. We\'re not auditors. Slide it up and watch the bars below show you exactly what\'s free — and what\'s going to show up on your next invoice.',
-    s3_slider_lbl:'Outbound minutes per month (everyone combined)',
+    s3_desc:'How many minutes does the average person spend on outbound calls per day? 60 min = 1 hour. The tool calculates the monthly total automatically based on your user count and 22 working days.',
+    s3_slider_lbl:'Average outbound calling per user per day',
     s3_info:'<strong>About those free minutes:</strong> they\'re per licence. More licences = more free minutes. Go over? That\'s <strong>~€0.025 per minute</strong> for EU destinations. Honestly not terrible.',
     s4_eyebrow:'Step 4 — How much do customers call you?',
     s4_title:'How many inbound minutes per month?',
-    s4_desc:'Basic and Standard give you 1,000 free inbound minutes per licence. Contact Center bumps that to 2,500. Go past the limit and it\'s per-minute billing. The bar below shows your breathing room.',
-    s4_slider_lbl:'Inbound minutes per month (everyone combined)',
+    s4_desc:'How many minutes does the average person spend on inbound calls per day? Estimate generously — better to have too much buffer than too little. The monthly total is calculated automatically.',
+    s4_slider_lbl:'Average inbound calling per user per day',
     s4_info:'Past the limit, it\'s <strong>~€0.0085 per minute</strong>. Sounds small, but 5,000 extra minutes adds up. Contact Center\'s buffer is significantly larger — worth it if your phones are busy.',
     s5_eyebrow:'Step 5 — How far does your voice travel?',
     s5_title:'Do you call outside Zoho\'s included countries?',
@@ -925,13 +927,13 @@ const TX = {
     lp_driver:'Bestimmt durch', lp_noagents:'Keine kostenlosen Agenten',
     s3_eyebrow:'Schritt 3 — Wie viel wird geredet?',
     s3_title:'Wie viele Ausgangsminuten pro Monat?',
-    s3_desc:'Addieren Sie alle Mitarbeiter und schätzen Sie realistisch. Wir überprüfen es nicht. Schieben Sie den Regler und sehen Sie sofort, was kostenlos ist — und was am Monatsende auf der Rechnung steht.',
-    s3_slider_lbl:'Ausgangsminuten pro Monat (alle zusammen)',
+    s3_desc:'Wie viele Minuten telefoniert ein durchschnittlicher Mitarbeiter pro Tag ausgehend? 60 Min = 1 Stunde. Das Monatstotal wird automatisch berechnet (Nutzeranzahl × 22 Arbeitstage).',
+    s3_slider_lbl:'Durchschnittliche Ausgangsminuten pro Nutzer pro Tag',
     s3_info:'<strong>Zu den Freiminuten:</strong> Sie gelten pro Lizenz. Mehr Lizenzen = mehr Freiminuten. Überschreitung? Dann werden <strong>~0,025 € pro Minute</strong> für EU-Ziele fällig. Ehrlich gesagt geht das in Ordnung.',
     s4_eyebrow:'Schritt 4 — Wie oft rufen Kunden an?',
     s4_title:'Wie viele Eingangsminuten pro Monat?',
-    s4_desc:'Basic und Standard: 1.000 kostenlose Eingangsminuten pro Lizenz. Contact Center: 2.500 — deutlich großzügiger. Darüber wird pro Minute abgerechnet. Der Balken zeigt Ihnen sofort, wie viel Puffer Sie haben.',
-    s4_slider_lbl:'Eingangsminuten pro Monat (alle zusammen)',
+    s4_desc:'Wie viele Minuten wird ein durchschnittlicher Mitarbeiter pro Tag angerufen? Lieber etwas großzügiger schätzen — der Puffer ist günstiger als Mehrkosten. Das Monatstotal wird automatisch berechnet.',
+    s4_slider_lbl:'Durchschnittliche Eingangsminuten pro Nutzer pro Tag',
     s4_info:'Über dem Limit: <strong>~0,0085 € pro Minute</strong>. Klingt wenig, summiert sich aber schnell. Contact Center hat wesentlich mehr Puffer — ideal für Teams mit hohem Anrufaufkommen.',
     s5_eyebrow:'Schritt 5 — Wie weit reicht Ihre Stimme?',
     s5_title:'Rufen Sie auch in Länder außerhalb des Pakets an?',
@@ -1050,8 +1052,8 @@ function applyLang(){
   });
   updProg();
   renderLicPreview();
-  renderBars('out',S.outMin,5000);
-  renderBars('in',S.inMin,10000);
+  renderBars('out',S.outMin,Math.max(S.outMin*1.5,1000));
+  renderBars('in',S.inMin,Math.max(S.inMin*1.5,1000));
   setBill(S.billing,true);
   // Refresh intl warning if visible
   if(S.intl==='world') showIntlWarn();
@@ -1085,7 +1087,7 @@ function setLang(l){
 // ══════════════════════════════════════════
 // STATE & PRICING
 // ══════════════════════════════════════════
-const S={admins:1,agents:0,outMin:0,inMin:0,intl:null,
+const S={admins:1,agents:0,outPerUser:0,inPerUser:0,outMin:0,inMin:0,intl:null,
   features:{ivr:true,monitoring:false,dialer:false,queue:false,sms:false},
   nums:{local:1,tollfree:0,personal:0},billing:'annual'};
 const TOTAL=8; let cur=1;
@@ -1134,14 +1136,57 @@ function goTo(n){
   updProg();
   window.scrollTo({top:0,behavior:'smooth'});
   if(n===2)renderLicPreview();
-  if(n===3)renderBars('out',S.outMin,5000);
-  if(n===4)renderBars('in',S.inMin,10000);
+  if(n===3){renderBars('out',S.outMin,Math.max(S.outMin*1.5,1000));if(S.outPerUser>0)slidePerUser('out',S.outPerUser);}
+  if(n===4){renderBars('in',S.inMin,Math.max(S.inMin*1.5,1000));if(S.inPerUser>0)slidePerUser('in',S.inPerUser);}
 }
 
 // ══════════════════════════════════════════
 // INPUTS
 // ══════════════════════════════════════════
 function stepV(k,d){ S[k]=Math.max(k==='agents'?0:1,S[k]+d); document.getElementById('d-'+k).textContent=S[k]; renderLicPreview(); }
+const WORK_DAYS = 22; // werkdagen per maand
+
+function usersCount(){ return Math.max(1, S.admins + S.agents); }
+
+function slidePerUser(dir,v){
+  const users = usersCount();
+  const totalMin = Math.round(v * users * WORK_DAYS);
+  if(dir==='out'){
+    S.outPerUser = v;
+    S.outMin = totalMin;
+    const h = Math.floor(v/60), m = v%60;
+    const hStr = h>0 ? h+(lang==='nl'?'u ':lang==='de'?'Std ':'h '): '';
+    const mStr = m>0 ? m+' '+(lang==='nl'?'min':'min'): '';
+    const valStr = v===0 ? (lang==='nl'?'0 min/dag':lang==='de'?'0 Min/Tag':'0 min/day') : (hStr+mStr).trim()+(lang==='nl'?'/dag':lang==='de'?'/Tag':'/day');
+    document.getElementById('sv-out').innerHTML = valStr;
+    const calcEl = document.getElementById('sl-out-calc');
+    if(calcEl){
+      if(v===0){
+        calcEl.textContent = lang==='nl'?'Geen uitgaande minuten ingesteld':lang==='de'?'Keine Ausgangsminuten eingestellt':'No outbound minutes set';
+      } else {
+        calcEl.textContent = users+' '+(lang==='nl'?'gebruiker'+(users!==1?'s':''):lang==='de'?'Nutzer':'user'+(users!==1?'s':''))+' × '+v+' min/dag × '+WORK_DAYS+(lang==='nl'?' werkdagen':lang==='de'?' Arbeitstage':' working days')+' = '+fmt(totalMin)+' min/'+(lang==='nl'?'mnd':lang==='de'?'Monat':'mo');
+      }
+    }
+  } else {
+    S.inPerUser = v;
+    S.inMin = totalMin;
+    const h = Math.floor(v/60), m = v%60;
+    const hStr = h>0 ? h+(lang==='nl'?'u ':lang==='de'?'Std ':'h '): '';
+    const mStr = m>0 ? m+' '+(lang==='nl'?'min':'min'): '';
+    const valStr = v===0 ? (lang==='nl'?'0 min/dag':lang==='de'?'0 Min/Tag':'0 min/day') : (hStr+mStr).trim()+(lang==='nl'?'/dag':lang==='de'?'/Tag':'/day');
+    document.getElementById('sv-in').innerHTML = valStr;
+    const calcEl = document.getElementById('sl-in-calc');
+    if(calcEl){
+      if(v===0){
+        calcEl.textContent = lang==='nl'?'Geen inkomende minuten ingesteld':lang==='de'?'Keine Eingangsminuten eingestellt':'No inbound minutes set';
+      } else {
+        calcEl.textContent = users+' '+(lang==='nl'?'gebruiker'+(users!==1?'s':''):lang==='de'?'Nutzer':'user'+(users!==1?'s':''))+' × '+v+' min/dag × '+WORK_DAYS+(lang==='nl'?' werkdagen':lang==='de'?' Arbeitstage':' working days')+' = '+fmt(totalMin)+' min/'+(lang==='nl'?'mnd':lang==='de'?'Monat':'mo');
+      }
+    }
+  }
+  renderBars(dir, totalMin, dir==='out'?999999:999999);
+}
+
 function slideDir(dir,v){
   S[dir==='out'?'outMin':'inMin']=v;
   document.getElementById('sv-'+dir).innerHTML=fmt(v)+'<span>'+t('min_abbr')+'</span>';
@@ -1504,13 +1549,14 @@ function zfShowSuccess(){
 // RESTART
 // ══════════════════════════════════════════
 function restart(){
-  Object.assign(S,{admins:1,agents:0,outMin:0,inMin:0,intl:null,
+  Object.assign(S,{admins:1,agents:0,outPerUser:0,inPerUser:0,outMin:0,inMin:0,intl:null,
     features:{ivr:true,monitoring:false,dialer:false,queue:false,sms:false},
     nums:{local:1,tollfree:0,personal:0},billing:'annual'});
   ['admins','agents'].forEach(k=>document.getElementById('d-'+k).textContent=k==='admins'?1:0);
   ['out','in'].forEach(d=>{
     document.getElementById('sl-'+d).value=0;
-    document.getElementById('sv-'+d).innerHTML='0<span>'+t('min_abbr')+'</span>';
+    document.getElementById('sv-'+d).innerHTML='0 min/dag';
+    const calcEl=document.getElementById('sl-'+d+'-calc'); if(calcEl) calcEl.textContent='';
   });
   document.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
   document.querySelectorAll('.chk').forEach(c=>{c.classList.remove('on');if(c.id==='chk-ivr')c.classList.add('on');});
