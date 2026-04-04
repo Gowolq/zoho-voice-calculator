@@ -1375,7 +1375,7 @@ function showResult(){
 
   // REC ROWS
   const rows=[];
-  rows.push({l:t('row_sub',{l:rec.l,' ppu':rec.p}),v:rec.planCost});
+  rows.push({l:t('row_sub',{l:rec.l,ppu:rec.p}),v:rec.planCost});
   if(rec.k==='basic'&&S.agents>0) rows.push({l:t('row_agents_basic',{n:S.agents}),v:rec.agentExtra,warn:true});
   else if(S.agents>0&&rec.plan.hasAgents){
     rows.push({l:t('row_slots_incl',{n:rec.slots,l:rec.l}),incl:true});
@@ -1408,7 +1408,7 @@ function showResult(){
     <div class="lb-stat">
       <div class="lb-stat-label">${t('lb_cost')}</div>
       <div class="lb-stat-val">€${fmt(rec.planCost)}</div>
-      <div class="lb-stat-sub">$${rec.p} × ${rec.l}</div>
+      <div class="lb-stat-sub">€${rec.p} × ${rec.l}</div>
     </div>
     <div class="lb-stat">
       <div class="lb-stat-label">${t('lb_admins')}</div>
